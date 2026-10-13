@@ -54,7 +54,7 @@ További adatkutatás: konyhakerti és gyümölcsös munka/víz; állatonkénti 
 ## Ellenőrzés
 
 ```sh
-node --test tests/model.test.mjs tests/plot.test.mjs tests/food.test.mjs
+node --test tests/model.test.mjs tests/plot.test.mjs tests/food.test.mjs tests/crops.test.mjs
 ```
 
 A tesztek a pénzügyi korlátokat, zárt költségelszámolást, darabszámokat, takarmány beszámítását, közös tételeket, munkadíj-egyenleget, importvalidálást és a geometriai vezérlőt ellenőrzik. A felület asztali és mobil Chromium böngészőben is ellenőrzött; a részletek a `VALIDATION.md` fájlban.
@@ -73,10 +73,22 @@ A `food.mjs` fogyasztási és hozamértékei **forrás nélküli tervezési pró
 
 A takarmányarány külön bemenet: a tényleges saját arányból kiszámolt éves igényből előbb levonjuk a megadott takarmányföld termését, majd a hiány / hozam adja a további földet. A felület a tartási helyet, a már felvett takarmányföldet és a további földet külön megmutatja, valamint jelzi a háromszög által módosított tényleges arányt.
 
-A régi, 1-es JSON betölthető, kézi módban marad, és a korábbi számítási eredményei megmaradnak. Az új export 2-es verziójú; a régi kliens ezt elutasítja, így nem értelmezi félre az önellátási célt. A böngészős mentés `gyoker-family-v2` / `gyoker-group-v2` kulcsokra kerül; a korábbi v1 mentést csak olvassuk az átálláshoz, és nem írjuk felül. A külön térképelőnézet mindkét mentési verzióból tud olvasni.
+A régi, 1-es JSON betölthető, kézi módban marad, és a korábbi számítási eredményei megmaradnak. Az új export 2-es verziójú; az 1-es formátumot támogató régi kliens ezt elutasítja, így nem értelmezi félre az önellátási célt. A jelenlegi böngészős mentés `gyoker-family-v3` / `gyoker-group-v3` kulcsokra kerül; a korábbi v2 és v1 mentést csak olvassuk az átálláshoz, és nem írjuk felül. A külön térképelőnézet mindhárom mentési verzióból tud olvasni.
 
 Az új önellátási és mentésátállási böngészőpróba: `node tests/food-browser.cjs`, ugyanazokkal a Playwright-beállításokkal, mint a meglévő felületteszt.
 
 ## Újdonságok oldal
 
 A `release-notes.html` a kalkulátor felső menüjéből érhető el. Minden bejegyzés dátumot és publikálási állapotot, a megoldott problémát, használati lépéseket és korlátokat tartalmaz. A publikált bejegyzésekhez a Git-commit rövid azonosítója is szerepel. Az önellátási fejlesztés saját bejegyzést kapott. Új kiadáskor a dátumot és publikálási állapotot is frissíteni kell.
+
+## Új növények és korábbi tervek bővítése
+
+A burgonya, csemegekukorica, étkezési szemes kukorica, takarmánykukorica és kajszibarackfa külön tevékenység. A burgonya és a friss, morzsolt csemegekukorica saját éves fogyasztási profilt kap; az étkezési szemes kukorica a gabonaigényből, a kajszi a közös gyümölcsigényből részesedik. A takarmánykukorica szárított szemtermése kizárólag a gabonatakarmány igényébe kerül, étkezési termelésként nem számítjuk be újra. Nem silókukorica.
+
+A konyhakert neve „Konyhakert / háztáji zöldséges”, és paradicsomos-paprikás vegyes kertet jelent. A külön felvett burgonya- és kukoricaágyásokat a vegyes kert területéből ki kell hagyni; a saját vegyes zöldségfogyasztásból is ki kell venni e külön termékeket. A meglévő kertmennyiséget nem bontjuk fel automatikusan. Fajonkénti zöldségcél, gyógynövényes kert és tűzifa-terület későbbi bővítés.
+
+Minden új terület-, költség-, víz-, munka-, hozam- és fogyasztási együttható módosítható, forrás nélküli próbaérték. Ezek szakmai helyességét a tesztek nem igazolják. A kajszi hozama termő korú fára vonatkozik.
+
+Korábbi JSON betöltésekor kizárólag a hiányzó új katalóguselemeket és profilokat adjuk hozzá, és a konyhakert alapmegnevezését pontosítjuk. Egyetlen új tevékenység sem kerül automatikusan a tervbe. A korábbi saját számokat és forrásokat megtartjuk; a módosított, ismét exportált terv visszatölthető. Az élelmiszerprofil `profileVersion: 2`; az előző, verziójelölés nélküli profilból csak az új termékek hiányzó adatait pótoljuk, hibás régi értékeket nem javítunk hallgatólagosan.
+
+Az új böngészős ellenőrzés `node tests/crops-browser.cjs`: régi v2 mentések átállása, új választási lehetőségek, önellátási célok, takarmány és étkezési kukorica szétválasztása, mentés-visszatöltés, közös leltár és mobilos megjelenítés.

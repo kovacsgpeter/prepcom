@@ -1,5 +1,5 @@
-import { CATALOGUE, DEFAULT_ASSUMPTIONS, SERVICES } from './data.mjs?v=20261013-4';
-import {defaultFoodProfile,FOOD_PRODUCTS,FOOD_PRODUCERS,foodRequirement,foodSummary} from './food.mjs?v=20261013-4';
+import { CATALOGUE, DEFAULT_ASSUMPTIONS, SERVICES, NEW_CROP_IDS } from './data.mjs?v=20261013-5';
+import {defaultFoodProfile,FOOD_PRODUCTS,FOOD_PRODUCERS,foodRequirement,foodSummary} from './food.mjs?v=20261013-5';
 
 export const clamp = (v,lo=0,hi=1) => Math.min(hi,Math.max(lo,v));
 const sum = (xs, fn=x=>x) => xs.reduce((s,x)=>s+fn(x),0);
@@ -109,6 +109,16 @@ export function validatePlan(raw) {
   const p=JSON.parse(JSON.stringify(raw));
   p.schemaVersion=2;
   p.food??=defaultFoodProfile();
+  if(typeof p.food!=='object'||Array.isArray(p.food))throw new Error('Hibás élelmiszerprofil.');
+  const foodVersion=p.food.profileVersion??1;
+  if(![1,2].includes(foodVersion))throw new Error('Ismeretlen élelmiszerprofil-verzió.');
+  // Extend the previous published profile; never replace existing coefficients.
+  if(foodVersion===1){
+    const defaults=defaultFoodProfile();
+    for(const id of ['potatoes','sweetcorn'])if(p.food.consumption&&!(id in p.food.consumption))p.food.consumption[id]=defaults.consumption[id];
+    for(const id of ['potato','sweetcorn','maize','apricot'])if(p.food.production&&!(id in p.food.production))p.food.production[id]=defaults.production[id];
+  }
+  p.food.profileVersion=2;
   for(const [id] of Object.entries(FOOD_PRODUCTS)){const c=p.food.consumption?.[id];if(!c||!['estimated','manual'].includes(c.mode))throw new Error('Hiányzó vagy hibás élelmiszer-fogyasztási profil.');number(c.annualPerPerson,'Éves egy főre jutó fogyasztás',0,1e6);number(c.annualHousehold,'Éves családi fogyasztás',0,1e9);}
   for(const [id] of Object.entries(FOOD_PRODUCERS)){const c=p.food.production?.[id];if(!c)throw new Error('Hiányzó éves élelmiszerhozam.');number(c.annualYield,'Éves hozam',.0001,1e9);number(c.usablePct,'Felhasználható termés hányada',.01,100);}
   p.landQuote??={unitPrice:0};
@@ -138,18 +148,23 @@ export function validatePlan(raw) {
   for(const k of Object.keys(DEFAULT_ASSUMPTIONS))number(p.assumptions[k],k,0,1e9);
   for(const k of ['irrigationLabourSaving','machineryLabourSaving','irrigationWaterSaving'])number(p.assumptions[k],k,0,95);
   if(p.assumptions.houseLandFactor<1||p.assumptions.feedShare>100||p.assumptions.contingencyPct>100||p.assumptions.designPct>100||p.assumptions.purchasePct>100||p.assumptions.grainYield<=0||p.assumptions.forageYield<=0)throw new Error('Érvénytelen arány vagy hozam az alapadatokban.');
-  if(!Array.isArray(p.catalogue)||p.catalogue.length>100)throw new Error('Hibás katalógus.');
+  if(!Array.isArray(p.catalogue)||p.catalogue.length>105)throw new Error('Hibás katalógus.');
   const ids=new Set();
   for(const c of p.catalogue) {
     if(typeof c.id!=='string'||!/^[a-z][a-z0-9-]{0,40}$/.test(c.id)||ids.has(c.id))throw new Error('Hibás vagy ismétlődő tevékenységazonosító.');
     ids.add(c.id);
     for(const k of ['name','unit','icon','category'])if(typeof c[k]!=='string'||c[k].length>120)throw new Error('Hibás katalógusszöveg.');
+    if('note' in c&&(typeof c.note!=='string'||c.note.length>2000))throw new Error('Hibás tevékenységmagyarázat.');
     for(const k of positiveFields)number(c[k],c.name,0,1e9);
     if(c.feedKind&&!['grain','forage'].includes(c.feedKind))throw new Error('Ismeretlen takarmánytípus.');
     for(const k of ['feed','feedPrice','feedYield'])if(k in c)number(c[k],c.name,0,1e9);
     if(c.feedYield===0)throw new Error('A takarmányhozamnak pozitívnak kell lennie.');
     if(c.feed&&(!c.feedKind||!Number.isFinite(c.feedPrice)))throw new Error('Hiányzó takarmányadat.');
   }
+  for(const id of NEW_CROP_IDS)if(!ids.has(id)){p.catalogue.push({...CATALOGUE.find(c=>c.id===id)});ids.add(id);}
+  if(p.catalogue.length>105)throw new Error('A bővített katalógus túl nagy.');
+  const garden=p.catalogue.find(c=>c.id==='garden'),gardenDefault=CATALOGUE.find(c=>c.id==='garden');
+  if(garden){if(garden.name==='Konyhakert')garden.name=gardenDefault.name;garden.note??=gardenDefault.note;}
   if(!Array.isArray(p.items)||p.items.length>100)throw new Error('Hibás tevékenységlista.');
   const used=new Set();
   for(const i of p.items){if(!ids.has(i.id)||used.has(i.id))throw new Error('Ismeretlen vagy ismétlődő tevékenység.');used.add(i.id);range(i,i.id,1e7);if(!['family','shared'].includes(i.scope)||typeof i.owned!=='boolean')throw new Error('Hibás tevékenység-beállítás.');const c=p.catalogue.find(x=>x.id===i.id);if(c.unit!=='m²'&&(!Number.isInteger(i.min)||!Number.isInteger(i.wish)))throw new Error('Az állat-, fa- és bokorszám egész szám legyen.');}

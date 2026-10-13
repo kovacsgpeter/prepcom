@@ -1,6 +1,7 @@
 import {researchSources} from './research.mjs';
-import {defaultFoodProfile} from './food.mjs?v=20261013-4';
-export const DATA_VERSION = '2026-10-v3-onellatasi-profilok';
+import {defaultFoodProfile} from './food.mjs?v=20261013-5';
+export const DATA_VERSION = '2026-10-v4-uj-novenyek';
+export const NEW_CROP_IDS = ['potato','sweetcorn','maize','feedmaize','apricot'];
 export const SOURCES = [
   { title: 'KSH – lakásstatisztika, építési költségek', url: 'https://www.ksh.hu/stadat?theme=lak', status: 'Ellenőrzésre vár. A készítéskor a hálózati hozzáférés blokkolva volt.' },
   { title: 'NAK – mezőgazdasági szakmai tájékoztatók', url: 'https://www.nak.hu/', status: 'További adatkutatáshoz javasolt forrás; a lenti együtthatók nem innen igazolt adatok.' },
@@ -11,7 +12,11 @@ export const SOURCES = [
 // Area: m²/unit; setup: Ft/unit; monthly: Ft/unit/month excluding purchased feed;
 // water: litres/unit/month; hours: hours/unit/month; feed: kg/unit/day, yield: kg/m²/year.
 export const CATALOGUE = [
-  { id:'garden', category:'Növények', name:'Konyhakert', icon:'🥕', unit:'m²', area:1, setup:900, monthly:35, water:35, hours:.045, peak:2.5, waterPeak:2.8, step:10 },
+  { id:'garden', category:'Növények', name:'Konyhakert / háztáji zöldséges', note:'Vegyes zöldséges: például paradicsom, paprika és más zöldségek. A külön felvett burgonya- és kukoricaágyásokat ne számold bele újra ebbe a területbe. A zöldség-önellátási cél vegyes zöldségmennyiség, nem külön paradicsom- vagy paprikacél.', icon:'🥕', unit:'m²', area:1, setup:900, monthly:35, water:35, hours:.045, peak:2.5, waterPeak:2.8, step:10 },
+  { id:'potato', category:'Növények', name:'Burgonya', note:'Külön burgonyaágyás, saját éves burgonyafogyasztással. A tárolási veszteséget a felhasználható hányaddal állíthatod. A vegyes kertből ezt a területet hagyd ki.', icon:'🥔', unit:'m²', area:1, setup:180, monthly:12, water:20, hours:.012, peak:3, waterPeak:2.5, step:10 },
+  { id:'sweetcorn', category:'Növények', name:'Csemegekukorica', note:'Friss étkezési kukorica. A fogyasztás és a hozam friss, morzsolt szem kg-ban értendő, csutka és csuhé nélkül. Nem szárított szemes gabona és nem takarmány. A vegyes kertben ne számold újra ezt az ágyást.', icon:'🌽', unit:'m²', area:1, setup:120, monthly:10, water:25, hours:.008, peak:3, waterPeak:2.5, step:10 },
+  { id:'maize', category:'Növények', name:'Szemes kukorica, étkezési célra', note:'Szárított étkezési szemtermés, az éves élelmezési gabonaigény része. Nem írjuk jóvá takarmányként is. Ha étkezésre és takarmányra is termelsz, oszd meg a területet a két külön tétel között.', icon:'🌽', unit:'m²', area:1, setup:55, monthly:8, water:5, hours:.0025, peak:4, waterPeak:2, step:100 },
+  { id:'feedmaize', category:'Növények', name:'Szemes kukorica, takarmányra', note:'Takarmánycélú szárított szemtermés; a gabonatakarmány saját igényébe egyszer számítjuk be. Nem silókukorica. Étkezési termelésként nem számoljuk el újra; a gabonaadag összetételét külön kell megtervezni.', icon:'🌽', unit:'m²', area:1, setup:55, monthly:8, water:5, hours:.0025, peak:4, waterPeak:2, step:100, feedYield:.7, feedKind:'grain' },
   { id:'greenhouse', category:'Növények', name:'Fólia / üvegház', icon:'🌱', unit:'m²', area:1.2, setup:18000, monthly:120, water:45, hours:.07, peak:2, waterPeak:2.2, step:5 },
   { id:'wheat', category:'Növények', name:'Búza, étkezési célra', icon:'🌾', unit:'m²', area:1, setup:50, monthly:8, water:0, hours:.0015, peak:4, waterPeak:1, step:100 },
   { id:'barley', category:'Növények', name:'Árpa', icon:'🌾', unit:'m²', area:1, setup:50, monthly:8, water:0, hours:.0015, peak:4, waterPeak:1, step:100 },
@@ -19,6 +24,7 @@ export const CATALOGUE = [
   { id:'forage', category:'Növények', name:'Szálastakarmány-terület', icon:'☘️', unit:'m²', area:1, setup:35, monthly:5, water:0, hours:.0015, peak:4, waterPeak:1, step:100, feedYield:.45, feedKind:'forage' },
   { id:'apple', category:'Gyümölcsös', name:'Almafa', icon:'🍎', unit:'fa', area:30, setup:18000, monthly:350, water:150, hours:.6, peak:3, waterPeak:2.5, step:1 },
   { id:'peach', category:'Gyümölcsös', name:'Őszibarackfa', icon:'🍑', unit:'fa', area:25, setup:18000, monthly:400, water:180, hours:.7, peak:3, waterPeak:2.5, step:1 },
+  { id:'apricot', category:'Gyümölcsös', name:'Kajszibarackfa', note:'A kajszi az őszibaracktól külön faj. A hozam termő korú fára vonatkozó éves próbaérték; új telepítés első éveit és a fagykár miatti kieső termést külön kell tervezni. A gyümölcs-önellátási cél a közös éves gyümölcsigényből részesedik.', icon:'🍑', unit:'fa', area:30, setup:18000, monthly:350, water:160, hours:.6, peak:3, waterPeak:2.5, step:1 },
   { id:'plum', category:'Gyümölcsös', name:'Szilvafa', icon:'🟣', unit:'fa', area:30, setup:16000, monthly:300, water:140, hours:.5, peak:3, waterPeak:2.5, step:1 },
   { id:'currant', category:'Gyümölcsös', name:'Ribizlibokor', icon:'🫐', unit:'bokor', area:2, setup:3500, monthly:80, water:25, hours:.1, peak:3, waterPeak:2.5, step:1 },
   { id:'raspberry', category:'Gyümölcsös', name:'Málnatő', icon:'🫐', unit:'tő', area:.8, setup:1500, monthly:50, water:15, hours:.08, peak:3, waterPeak:2.5, step:1 },

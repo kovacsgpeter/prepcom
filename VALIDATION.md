@@ -2,7 +2,7 @@
 
 ## Számítások
 
-`node --test tests/model.test.mjs tests/plot.test.mjs tests/food.test.mjs` — **34 teszt**, nincs kihagyott teszt. A konkrét esetek:
+`node --test tests/model.test.mjs tests/plot.test.mjs tests/food.test.mjs tests/crops.test.mjs` — **40 teszt**, nincs kihagyott teszt. A konkrét esetek:
 
 - Induló keret zárt elszámolása, tartalékkal és vételi járulékos költségekkel.
 - Régi JSON telekár nélkül továbbra is betölthető; ár nélkül a vételár ismeretlen, nem nulla.
@@ -63,4 +63,12 @@ Az új export séma 2-es, a régi 1-es import támogatott. A korábbi helyi ment
 
 A fogyasztási és hozamszámok agronómiai hitelességét ezek a tesztek nem igazolják.
 
-Az új `tests/food-browser.cjs` az önellátási módváltást, fogyasztás-felülírást, éves hozam módosítását, egész állatot és többletet, nulla célt, szinkronizált százalékcsúszkát, takarmányterület változását, kézi értékek megőrzését, forrás mentését, 2-es JSON-exportot, közös élelmiszer-összegzést, mobilos megjelenést, újratöltést és a régi családi / közösségi helyi mentés megőrzését ellenőrzi. A külön Újdonságok oldal menülinkjét, négy bejegyzését, a publikálási állapotot és mobilos túllógásmentességét is vizsgálja.
+Az új `tests/food-browser.cjs` az önellátási módváltást, fogyasztás-felülírást, éves hozam módosítását, egész állatot és többletet, nulla célt, szinkronizált százalékcsúszkát, takarmányterület változását, kézi értékek megőrzését, forrás mentését, 2-es JSON-exportot, közös élelmiszer-összegzést, mobilos megjelenést, újratöltést és a régi családi / közösségi helyi mentés megőrzését ellenőrzi. A külön Újdonságok oldal menülinkjét, öt bejegyzését, a publikálási állapotot és mobilos túllógásmentességét is vizsgálja.
+
+## Új növények — kompatibilitás a publikált önellátási változattal
+
+Hat új modellteszt ellenőrzi a korábbi élelmiszerprofil bővítését, a saját együtthatók megőrzését, ismételt import változatlanságát, hibás profilok elutasítását, a külön burgonya- és csemegekukorica-igényt, kajszifák egészre kerekítését, kukoricahozam egyszeri takarmánybeszámítását és az új tevékenységek családi / közös térképét.
+
+A publikált `96ab1a0492f33c40cca008965e27ff5e17acaade` modellel **146 helyi összehasonlítás** készült: korábbi mintaterv, privát felhasználói export, saját fogyasztást és hozamot használó önellátási terv, két pénzügyi mód, csúcsok és középpont, 0 / 50 / 100% takarmány, minimum- és aktuális terv, valamint két közösségi eset. Minden korábbi eredménymező egyezett a konyhakert szándékosan pontosított megnevezésétől eltekintve. A privát export nem került a repositoryba.
+
+A `tests/crops-browser.cjs` külön bizonyítja a korábbi v2 családi és közösségi helyi mentések változatlan megőrzését, az új v3 munkapéldányba való átállást, mind az öt új választási lehetőséget, az önellátási módot, külön burgonyafogyasztás felülírását, kukorica felhasználási célok szétválasztását, JSON-exportot és újratöltést, közös leltárt, valamint a mobilos oldalt és Újdonságok bejegyzést. A korábbi `tests/browser.cjs` és `tests/food-browser.cjs` teljesen sikeres maradt. Egyik böngészőpróba sem jelzett futási hibát.
