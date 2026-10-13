@@ -137,3 +137,16 @@ További ellenőrzések:
 node --test tests/*.test.mjs
 GYOKER_PLAYWRIGHT_MODULE=/opt/codex/runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright node tests/blog-browser.cjs
 ```
+
+## Önellátási szintek és a birtokhoz illeszkedő családszám
+
+A Blog két további, kivonattal kezdődő cikke:
+
+- `blog-onellatas.html`: minden változatban 2 felnőtt és 2 gyerek. Alapcél: 100% zöldség, 50% gyümölcs, 100% tojás és ivótej; a második szint 100% húst, a harmadik 80% étkezési gabonát is kér. Kecske- és sertésprofilt használ, értékesítési bevétel nélkül. Külön látszik a 0 / 50 / 100% saját takarmány, a termelőegységek egészre kerekítése és a cél feletti termelés. A legtöbb fogyasztási, hozam-, költség- és munkaérték próbaadat.
+- `blog-birtok-meret.html`: a teljes eladó ingatlant veszi alapul, és 1–24 négyfős család terveit vizsgálja. Közös vagy családonként külön termelőegység, vegyes önellátási cél, teljes terület, használható termőterület, lakóegység-korlát, pénz és munkaátlag/csúcs is szerepel. A javaslat a választott területi illeszkedési küszöböt elérő legkisebb elfogadható vizsgált létszám; nem univerzális optimum. Ismeretlen termőterület vagy lakóhelyszám mellett feltételes.
+
+A teljes ingatlanvétel és egyszeri vásárlási költség családonként oszlik, a ház, infrastruktúra és tartalék kerete is bekerül. A birtok többletfenntartása az OPEX-ben és működési tartalékban egyszer szerepel. A használathoz még nem rendelt terület egyszerű arányos vételár-/alternatívaköltség-jelzése nem külön levonás vagy igazolt résztelekérték.
+
+A `self-sufficiency.mjs` az alkalmazás meglévő `calculate` függvényét használja; a fő kalkulátort, JSON-formátumot és helyi mentéseket nem változtatja. A két cikk között csak a példa profilja kerül át a `gyoker-blog-self-profile` sessionStorage kulccsal. Ez ugyanazon böngésző-munkamenetre szól; nincs adatfeltöltés vagy családi mentés felülírása.
+
+Ellenőrzés: `node --test tests/*.test.mjs`, valamint `tests/self-articles-browser.cjs` a korábban megadott Playwright-beállításokkal.
