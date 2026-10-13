@@ -1,6 +1,6 @@
 import {researchSources} from './research.mjs';
-import {defaultFoodProfile} from './food.mjs?v=20261013-6';
-import {defaultWoodProfile} from './wood.mjs?v=20261013-6';
+import {defaultFoodProfile} from './food.mjs?v=20261013-7';
+import {defaultWoodProfile} from './wood.mjs?v=20261013-7';
 export const DATA_VERSION = '2026-10-v5-tuzifa';
 export const NEW_CROP_IDS = ['potato','sweetcorn','maize','feedmaize','apricot'];
 export const NEW_ACTIVITY_IDS = [...NEW_CROP_IDS,'firewood'];

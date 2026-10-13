@@ -54,7 +54,7 @@ További adatkutatás: konyhakerti és gyümölcsös munka/víz; állatonkénti 
 ## Ellenőrzés
 
 ```sh
-node --test tests/model.test.mjs tests/plot.test.mjs tests/food.test.mjs tests/crops.test.mjs tests/wood.test.mjs
+node --test tests/model.test.mjs tests/plot.test.mjs tests/food.test.mjs tests/crops.test.mjs tests/wood.test.mjs tests/explain.test.mjs tests/labor.test.mjs
 ```
 
 A tesztek a pénzügyi korlátokat, zárt költségelszámolást, darabszámokat, takarmány beszámítását, közös tételeket, munkadíj-egyenleget, importvalidálást és a geometriai vezérlőt ellenőrzik. A felület asztali és mobil Chromium böngészőben is ellenőrzött; a részletek a `VALIDATION.md` fájlban.
@@ -106,3 +106,17 @@ A várakozás alatti további vásárlás többéves összegét tájékoztatóan
 A közös terület termelése és tárolása egyszer szerepel. Eltérő hozamoknál a kisebb, költség/munka/tárolás esetén a magasabb fajlagos igény érvényesül. Az elfogadott túl kicsi területnél a saját cél hiányát jelezzük. A térképen fás termőterület és külön fatároló látszik.
 
 Régi tervben a tűzifa-profil és választási lehetőség hozzáadódik, tevékenységet nem aktiválunk. Tűzifát tartalmazó családi vagy közös export **3-as séma**, a korábbi 1-es és 2-es import támogatott; a korábbi kliens a 3-as fájlt elutasítja. Tűzifa nélkül az export 2-es marad. A v4 helyi munkapéldány a v3 mentést is megőrzi. Az új böngészőpróba: `node tests/wood-browser.cjs`, az eddigi Playwright-beállításokkal.
+
+## Költség-, terület- és munkamagyarázatok
+
+A családi költségkártya Tervezés, Gazdaság indítása, Infrastruktúra, eszközök és Biztonsági keret sorai lenyithatók. A résztételek összege az eredeti költség, nem új levonás. A tervezés az alap építési ár százaléka, saját építési munka előtt; az induló biztonsági keret a tényleges induló kiadások százaléka. A talajvizsgálat és műszaki ellenőr az infrastruktúrában szerepel. A tervezési keretet szakági ajánlat nélkül nem bontjuk kitalált statikai / gépészeti részárakra. Gazdaságindításnál külön beszerzés / telepítés, további takarmányföld indítása, valamint tűzifánál fatároló és induló készlet látszik.
+
+A `explain.mjs` a már kiszámított értékekből épít részleteket. A százalékos területábra a térképpel azonos teljes területből indul: tevékenységenként, illetve külön területrészenként is pontosan egyszer számol. Állat / takarmány és tűzifa / tároló a részletes nézetben külön szerepel. A családi próbák 0 / 100% saját takarmányt és önellátási célnál kisebb hozamot vizsgálnak, a mentett terv módosítása nélkül. A kézzel felvett takarmányföld e próbákban is megmarad. A reveal party a korrigált családi és egyszer elszámolt közös területet mutatja.
+
+A takarmánymagyarázat a konkrét növény aktuális hozamát, termését és az automatikus terület hozamfeltételezését is kiírja. Az automatikus gabonaföld induló hozama 0,45 kg/m²/év, a takarmánykukoricáé 0,70; eltérő hozam mellett ugyanaz a kg-igény más teljes földet kérhet. Ez tömeg-egyenérték, nem energia-/fehérje-egyenérték vagy takarmányrecept. Gabona és szálastakarmány külön típus marad; az étkezési kukorica nem takarmány-jóváírás.
+
+A `labor.mjs` a meglévő összes munkaórát feladatonként osztja szét. **A feladatarányok forrás nélküli próbaelosztások**, nem mért munkanapló. Minden táblázat havi éves átlagot, éves órát és arányosan osztott csúcsot mutat. Vetés, ültetés és trágyázás szezonális, nem minden hónapban elvégzendő feladat. Állatoknál etetés / gondozás / almozás / fejés vagy tojásgyűjtés jelenik meg. A további saját takarmányföld és a tűzifafeldolgozás külön munkacsoport. A gyümölcsös alapóra éves fenntartás és terméskezelés, a kezdeti telepítés saját munkáját külön nem méretezi. A ház saját építési munkája egyszeri, a havi gazdasági összegen kívül van.
+
+A közös munka bontása a takarmány-jóváírásokkal korrigált sorokból indul, a közös feladatot egyszer mutatja. Eltérő fajlagos becsléseknél ugyanazt a konzervatív órakeretet bontja, mint az összesítés; az átlag és csúcs legnagyobb becslése eltérő családtól is származhat. A feladatok összege az eredeti óraszám, az elszámolás / óravállalás nem újabb fizikai feladat.
+
+A JSON-formátum, helyi mentési kulcsok és korábbi numerikus eredmények változatlanok. Az új böngészőpróba `node tests/explain-browser.cjs`. A kinyitott családi részletek beviteli változtatáskor is nyitva maradnak; a bezárt összehasonlítás nem nyílik vissza automatikusan.

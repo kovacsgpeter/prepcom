@@ -1,6 +1,6 @@
-import {defaultPlan} from './data.mjs?v=20261013-6';
-import {calculate,aggregate,validatePlan} from './model.mjs?v=20261013-6';
-import {familyMapData,groupMapData,renderEstateMap,connectEstateMaps} from './plot.mjs?v=20261013-6';
+import {defaultPlan} from './data.mjs?v=20261013-7';
+import {calculate,aggregate,validatePlan} from './model.mjs?v=20261013-7';
+import {familyMapData,groupMapData,renderEstateMap,connectEstateMaps} from './plot.mjs?v=20261013-7';
 const $=s=>document.querySelector(s);
 function sample(name='Minta család',variant=0){
   const p=defaultPlan();p.family.name=name;p.family.budget=180000000;p.home.min=80;p.home.wish=100+variant*10;p.home.locked=true;

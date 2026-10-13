@@ -1,6 +1,6 @@
-import { CATALOGUE, DEFAULT_ASSUMPTIONS, SERVICES, NEW_ACTIVITY_IDS } from './data.mjs?v=20261013-6';
-import {defaultFoodProfile,FOOD_PRODUCTS,FOOD_PRODUCERS,foodRequirement,foodSummary} from './food.mjs?v=20261013-6';
-import {defaultWoodProfile,WOOD_FIELDS,woodRequirement,woodAtArea,woodSummary,mergeWood} from './wood.mjs?v=20261013-6';
+import { CATALOGUE, DEFAULT_ASSUMPTIONS, SERVICES, NEW_ACTIVITY_IDS } from './data.mjs?v=20261013-7';
+import {defaultFoodProfile,FOOD_PRODUCTS,FOOD_PRODUCERS,foodRequirement,foodSummary} from './food.mjs?v=20261013-7';
+import {defaultWoodProfile,WOOD_FIELDS,woodRequirement,woodAtArea,woodSummary,mergeWood} from './wood.mjs?v=20261013-7';
 
 export const clamp = (v,lo=0,hi=1) => Math.min(hi,Math.max(lo,v));
 const sum = (xs, fn=x=>x) => xs.reduce((s,x)=>s+fn(x),0);
@@ -105,7 +105,7 @@ export function calculate(plan,{minimum=false}={}) {
   const water=domesticWater+sum(rows,x=>x.water),peakWater=domesticWater+sum(rows,x=>x.peakWater);
   const foodResults=foodSummary([plan],[{rows}]);
   const woodResults=woodSummary([plan],[{rows}]);
-  return {homeArea,reserveMonths,feedShare,rows,serviceRows,house,design,farm,infrastructure,upfront,contingency,monthly,reserve,landBudget,cashForLand,homeLand,siteLand,landArea,hours,peakHours,water,peakWater,ownConstructionHours,autoFeedByKind,nonLandTotal,budgetGap,landPrice,purchaseFees,totalWithLand,totalGap,affordableLandBudget,maximumArea,feedLand,foodResults,woodResults,
+  return {homeArea,reserveMonths,feedShare,rows,serviceRows,house,design,farm,infrastructure,upfront,contingency,monthly,reserve,landBudget,cashForLand,homeLand,siteLand,landArea,hours,peakHours,water,peakWater,ownConstructionHours,autoFeedByKind,nonLandTotal,budgetGap,landPrice,purchaseFees,totalWithLand,totalGap,affordableLandBudget,maximumArea,feedLand,foodResults,woodResults,calculationInputs:{houseBase,cropArea,autoLevel,machineLevel,irrigationCost},
     breakdown:[{name:'Házépítés',value:house,color:'#d78c53'},{name:'Tervezés',value:design,color:'#e9ba7c'},{name:'Gazdaság indítása',value:farm,color:'#718a51'},{name:'Infrastruktúra, eszközök',value:infrastructure,color:'#99aaa3'},{name:'Biztonsági keret',value:contingency,color:'#d5bfa0'},{name:'Működési tartalék',value:reserve,color:'#8faeb4'},{name:'Telekvásárlásra megmaradó pénz',value:Math.max(0,cashForLand),color:'#254f3c'}]};
 }
 

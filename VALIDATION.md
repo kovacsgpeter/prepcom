@@ -2,7 +2,7 @@
 
 ## Számítások
 
-`node --test tests/model.test.mjs tests/plot.test.mjs tests/food.test.mjs tests/crops.test.mjs tests/wood.test.mjs` — **51 teszt**, nincs kihagyott teszt. A konkrét esetek:
+`node --test tests/model.test.mjs tests/plot.test.mjs tests/food.test.mjs tests/crops.test.mjs tests/wood.test.mjs tests/explain.test.mjs tests/labor.test.mjs` — **63 teszt**, nincs kihagyott teszt. A konkrét esetek:
 
 - Induló keret zárt elszámolása, tartalékkal és vételi járulékos költségekkel.
 - Régi JSON telekár nélkül továbbra is betölthető; ár nélkül a vételár ismeretlen, nem nulla.
@@ -63,7 +63,7 @@ Az új export séma 2-es, a régi 1-es import támogatott. A korábbi helyi ment
 
 A fogyasztási és hozamszámok agronómiai hitelességét ezek a tesztek nem igazolják.
 
-Az új `tests/food-browser.cjs` az önellátási módváltást, fogyasztás-felülírást, éves hozam módosítását, egész állatot és többletet, nulla célt, szinkronizált százalékcsúszkát, takarmányterület változását, kézi értékek megőrzését, forrás mentését, 2-es JSON-exportot, közös élelmiszer-összegzést, mobilos megjelenést, újratöltést és a régi családi / közösségi helyi mentés megőrzését ellenőrzi. A külön Újdonságok oldal menülinkjét, hat bejegyzését, a publikálási állapotot és mobilos túllógásmentességét is vizsgálja.
+Az új `tests/food-browser.cjs` az önellátási módváltást, fogyasztás-felülírást, éves hozam módosítását, egész állatot és többletet, nulla célt, szinkronizált százalékcsúszkát, takarmányterület változását, kézi értékek megőrzését, forrás mentését, 2-es JSON-exportot, közös élelmiszer-összegzést, mobilos megjelenést, újratöltést és a régi családi / közösségi helyi mentés megőrzését ellenőrzi. A külön Újdonságok oldal menülinkjét, hét bejegyzését, a publikálási állapotot és mobilos túllógásmentességét is vizsgálja.
 
 ## Új növények — kompatibilitás a publikált önellátási változattal
 
@@ -82,3 +82,13 @@ A publikált `0ee6aa8474254f32dd20173adc9ae0793df3e774` modellhez képest 146 ö
 A `tests/wood-browser.cjs` bizonyítja a v3 családi és közösségi helyi mentés változatlan megőrzését, a v4 munkapéldányt, a tűzifa cél- és hozamszámítását, a forduló változtatásakor állandó területet, meglévő állomány és tárolás jelölését, forrásszerkesztést, 3-as családi / közös JSON-exportot és közös visszatöltést, a túl kicsi közös terület hiányjelzését, valamint a mobilos felületet és Újdonságok oldalt. A három korábbi böngészőpróba is sikeres. A helyi tesztkiszolgálót üres HTTP-válasz után újraindítottuk fájlba irányított naplóval; a funkcionális próbák ezután sikeresek.
 
 A próbák nem igazolják az erdészeti és fűtéstechnikai együtthatók szakmai helyességét. Ezek mindenhol módosítható, forrás nélküli próbaértékként szerepelnek.
+
+## Költség, terület és feladatonkénti munka
+
+12 új teszt ellenőrzi a költségbontások zárt összegét saját építési munkával, beszerzés kihagyásával, öntözéssel, gépesítéssel, további takarmánnyal és tűzifakészlettel; a tervezési 80 M Ft × 6% = 4,8 M Ft példát; a tényleges költségből számolt biztonsági keretet; mindkét területnézet 100%-os egyszeri elszámolását; közös terület és korrigált takarmány / tároló megjelenítését; a próbák változatlanul hagyott bemeneteit; üres tervet; valamint feladatokra osztott átlag-, éves és csúcsórák pontos összegét családi / közös használatnál, saját takarmány és tűzifafeldolgozás mellett is.
+
+A publikált `5943984b7ae39ef9864fbee373dabaca15c53c0e` számítási modellhez képest **194 helyi összehasonlításban minden korábbi eredménymező egyezett**. Korábbi mintaterv, privát export, önellátási és tűzifás terv, két pénzügyi mód, csúcsok / középpont, takarmányarányok, minimum / aktuális terv és két közösségi eset szerepelt. Csak az új magyarázati bemenetek jelennek meg új eredménymezőként; a terv vagy export számai nem módosulnak.
+
+A `tests/explain-browser.cjs` ellenőrzi a négy lenyitható költségsort, a tervezési példát, a részösszegeket és forrásokat, az állat / takarmány területi arányát, a munkafeladatok óráit, a nyitott és bezárt részletek állapotának megtartását, a próbák mentést nem módosító működését, a 0,45 / 0,70-es hozamok és kukoricatermés jóváírásának magyarázatát, a közös terület és munka pontos elszámolását, mobilos felületet és Újdonságok oldalt. Mind a négy korábbi böngészőpróba is sikeres volt, futási hiba nélkül.
+
+A részletes feladatarányok szakmai helyességét ezek a próbák nem igazolják: azok külön jelölt, forrás nélküli próbaelosztások. A költség- és területrészletek a korábbi modell értékeit magyarázzák, annak adatminőségi korlátait nem oldják fel.
