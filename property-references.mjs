@@ -1,0 +1,8 @@
+// User-supplied listing descriptions, collected 2026-10-13; not independently verified.
+// Asking prices, not recorded transaction prices. Mixed estates are not pure farmland.
+export const PROPERTY_REFERENCES=[
+ {id:'35589984',url:'https://ingatlan.com/35589984',location:'Alsópetény · külterületi vegyes birtok',price:95000000,area:200000,areaApprox:true,usableFeedArea:null,building:'unknown',note:'A leírás közel 20 hektárt közöl; a 200 000 m² csak közelítés. Erdő, legelő, szántó, gyümölcsös, rét és tó vegyesen; a takarmányra használható terület aránya ismeretlen. Áramhálózat a telek mellett, felújítandó kút. Lakóépületet nem azonosítottunk. Kifüggesztéskötelesként hirdetik.'},
+ {id:'35567099',url:'https://ingatlan.com/35567099',location:'Pásztó–Hasznos · belterületi legelő',price:36000000,area:20368,areaApprox:false,usableFeedArea:null,building:'no',note:'A hirdetés szerint beépítetlen, belterületi, 3. minőségi osztályú legelő; közművek a telek előtt. A hirdetett 3%-os beépíthetőség és az esetleges átminősítés nem itt igazolt lehetőség. Az árszintet a fekvés és a fejlesztési várakozás is befolyásolhatja.'},
+ {id:'35570089',url:'https://ingatlan.com/35570089',location:'Ecseg · építési telkek + mezőgazdasági rész',price:40000000,area:11541,areaApprox:false,usableFeedArea:7063,building:'yes',note:'Három helyrajzi szám: 2989 + 1489 m² belterületi építési telekként, 7063 m² MAT-területként hirdetve; pince is tartozik hozzá. A 30%-os beépíthetőség a hirdetés szerint a két építési telekre vonatkozik, nem a teljes 11 541 m²-re. Vízóra a 2989 m²-es telken. A csomagárból nem ismert külön a mezőgazdasági rész ára.'},
+];
+export function propertyUnitPrice(price,area){return Number.isFinite(price)&&price>0&&Number.isFinite(area)&&area>0?price/area:null;}

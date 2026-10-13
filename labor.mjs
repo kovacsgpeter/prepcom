@@ -4,6 +4,7 @@ const profiles={
  garden:[['Talaj-előkészítés',.15],['Vetés, palántázás / ültetés',.15],['Trágyázás, tápanyag-utánpótlás',.10],['Öntözés ellenőrzése / elvégzése',.15],['Gyomlálás, növényvédelem',.25],['Szedés, betakarítás, terméskezelés',.20]],
  orchard:[['Metszés, korona- és tőápolás',.25],['Trágyázás, tápanyag-utánpótlás',.10],['Öntözés',.15],['Gyomkezelés, növényvédelem',.20],['Szüret, válogatás és terméskezelés',.30]],
  grain:[['Talaj-előkészítés',.25],['Vetés',.15],['Trágyázás, tápanyag-utánpótlás',.20],['Gyomkezelés, növényvédelem',.15],['Betakarítás, szárítás / tárolás',.25]],
+ pasture:[['Kerítés és itató ellenőrzése',.35],['Szakaszváltás, legeltetés szervezése',.30],['Gyepápolás, tápanyag-utánpótlás',.25],['Fűkínálat és állományterhelés ellenőrzése',.10]],
  forage:[['Terület- és állománykezelés',.20],['Tápanyag-utánpótlás',.15],['Kaszálás, betakarítás',.40],['Szárítás, behordás és tárolás',.25]],
  dairy:[['Etetés, itatás',.35],['Fejés, tejkezelés és eszközmosás',.35],['Almozás, takarítás, trágyakezelés',.20],['Állategészségügyi ellenőrzés, gondozás',.10]],
  layers:[['Etetés, itatás',.35],['Almozás, óltakarítás, trágyakezelés',.30],['Tojásgyűjtés, válogatás',.25],['Állategészségügyi ellenőrzés',.10]],
@@ -13,7 +14,7 @@ const profiles={
  woodProcessing:[['Kitermelés, darabolás',.35],['Hasítás, feldolgozás',.35],['Rakodás, szárítási és tárolási kezelés',.30]],
 };
 export const WORK_PROFILES=profiles;
-function profileFor(row){if(row.id==='firewood')return 'woodland';if(row.id==='hen')return 'layers';if(['cowmilk','goatmilk'].includes(row.id))return 'dairy';if(row.id==='bees')return 'bees';if(row.category==='Állatok')return 'animals';if(row.category==='Gyümölcsös')return 'orchard';if(row.id==='forage')return 'forage';if(['wheat','barley','maize','feedmaize','feedgrain'].includes(row.id))return 'grain';return 'garden';}
+function profileFor(row){if(row.id==='firewood')return 'woodland';if(row.id==='hen')return 'layers';if(['cowmilk','goatmilk'].includes(row.id))return 'dairy';if(row.id==='bees')return 'bees';if(row.category==='Állatok')return 'animals';if(row.category==='Gyümölcsös')return 'orchard';if(row.id==='pasture')return 'pasture';if(row.id==='forage')return 'forage';if(['wheat','barley','maize','feedmaize','feedgrain'].includes(row.id))return 'grain';return 'garden';}
 function split(profile,hours,peak,kind){return profiles[profile].map(([label,share])=>({label,share,hours:hours*share,annualHours:hours*share*12,peakHours:peak*share,kind}));}
 export function workBlock(plan,row,{reference=row,peakReference=reference,owner=plan.family.name}={}){
  const scale=reference.qty?row.qty/reference.qty:0,peakScale=peakReference.qty?row.qty/peakReference.qty:0;

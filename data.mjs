@@ -1,9 +1,9 @@
 import {researchSources} from './research.mjs';
-import {defaultFoodProfile} from './food.mjs?v=20261013-7';
-import {defaultWoodProfile} from './wood.mjs?v=20261013-7';
-export const DATA_VERSION = '2026-10-v5-tuzifa';
+import {defaultFoodProfile} from './food.mjs?v=20261013-8';
+import {defaultWoodProfile} from './wood.mjs?v=20261013-8';
+export const DATA_VERSION = '2026-10-v6-legelo';
 export const NEW_CROP_IDS = ['potato','sweetcorn','maize','feedmaize','apricot'];
-export const NEW_ACTIVITY_IDS = [...NEW_CROP_IDS,'firewood'];
+export const NEW_ACTIVITY_IDS = [...NEW_CROP_IDS,'firewood','pasture'];
 export const SOURCES = [
   { title: 'KSH – lakásstatisztika, építési költségek', url: 'https://www.ksh.hu/stadat?theme=lak', status: 'Ellenőrzésre vár. A készítéskor a hálózati hozzáférés blokkolva volt.' },
   { title: 'NAK – mezőgazdasági szakmai tájékoztatók', url: 'https://www.nak.hu/', status: 'További adatkutatáshoz javasolt forrás; a lenti együtthatók nem innen igazolt adatok.' },
@@ -23,6 +23,7 @@ export const CATALOGUE = [
   { id:'wheat', category:'Növények', name:'Búza, étkezési célra', icon:'🌾', unit:'m²', area:1, setup:50, monthly:8, water:0, hours:.0015, peak:4, waterPeak:1, step:100 },
   { id:'barley', category:'Növények', name:'Árpa', icon:'🌾', unit:'m²', area:1, setup:50, monthly:8, water:0, hours:.0015, peak:4, waterPeak:1, step:100 },
   { id:'feedgrain', category:'Növények', name:'Takarmánygabona', icon:'🌾', unit:'m²', area:1, setup:50, monthly:8, water:0, hours:.0015, peak:4, waterPeak:1, step:100, feedYield:.45, feedKind:'grain' },
+  { id:'pasture', category:'Növények', name:'Legelő', note:'Legeltetéssel hasznosított gyep, nem kaszáló. A hozam már hasznosítható szárazanyag (taposás, visszahagyott fű és veszteségek után). A legeltetési napok korlátozzák az éves beszámítást; a fennmaradó saját igényhez szálastakarmány-földet adunk. Nem vált ki abrakot. A téli készlet, állatok itatása és kerítés külön tervezendő. Minden kezdő adat próbaérték.', icon:'🌿', unit:'m²', area:1, setup:35, monthly:2, water:0, hours:.0008, peak:3, waterPeak:1, step:100, feedYield:.25, feedKind:'forage', grazingDays:180 },
   { id:'forage', category:'Növények', name:'Szálastakarmány-terület', icon:'☘️', unit:'m²', area:1, setup:35, monthly:5, water:0, hours:.0015, peak:4, waterPeak:1, step:100, feedYield:.45, feedKind:'forage' },
   { id:'apple', category:'Gyümölcsös', name:'Almafa', icon:'🍎', unit:'fa', area:30, setup:18000, monthly:350, water:150, hours:.6, peak:3, waterPeak:2.5, step:1 },
   { id:'peach', category:'Gyümölcsös', name:'Őszibarackfa', icon:'🍑', unit:'fa', area:25, setup:18000, monthly:400, water:180, hours:.7, peak:3, waterPeak:2.5, step:1 },

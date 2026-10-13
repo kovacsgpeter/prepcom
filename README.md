@@ -73,7 +73,7 @@ A `food.mjs` fogyasztási és hozamértékei **forrás nélküli tervezési pró
 
 A takarmányarány külön bemenet: a tényleges saját arányból kiszámolt éves igényből előbb levonjuk a megadott takarmányföld termését, majd a hiány / hozam adja a további földet. A felület a tartási helyet, a már felvett takarmányföldet és a további földet külön megmutatja, valamint jelzi a háromszög által módosított tényleges arányt.
 
-A régi, 1-es JSON betölthető, kézi módban marad, és a korábbi számítási eredményei megmaradnak. Az új export 2-es verziójú; az 1-es formátumot támogató régi kliens ezt elutasítja, így nem értelmezi félre az önellátási célt. A jelenlegi böngészős mentés `gyoker-family-v4` / `gyoker-group-v4` kulcsokra kerül; a korábbi v3, v2 és v1 mentést csak olvassuk az átálláshoz, és nem írjuk felül. A külön térképelőnézet mind a négy mentési verzióból tud olvasni.
+A régi, 1-es JSON betölthető, kézi módban marad, és a korábbi számítási eredményei megmaradnak. Az új export 2-es verziójú; az 1-es formátumot támogató régi kliens ezt elutasítja, így nem értelmezi félre az önellátási célt. A jelenlegi böngészős mentés `gyoker-family-v5` / `gyoker-group-v5` kulcsokra kerül; a korábbi v4, v3, v2 és v1 mentést csak olvassuk az átálláshoz, és nem írjuk felül. A külön térképelőnézet mind az öt mentési verzióból tud olvasni.
 
 Az új önellátási és mentésátállási böngészőpróba: `node tests/food-browser.cjs`, ugyanazokkal a Playwright-beállításokkal, mint a meglévő felületteszt.
 
@@ -120,3 +120,20 @@ A `labor.mjs` a meglévő összes munkaórát feladatonként osztja szét. **A f
 A közös munka bontása a takarmány-jóváírásokkal korrigált sorokból indul, a közös feladatot egyszer mutatja. Eltérő fajlagos becsléseknél ugyanazt a konzervatív órakeretet bontja, mint az összesítés; az átlag és csúcs legnagyobb becslése eltérő családtól is származhat. A feladatok összege az eredeti óraszám, az elszámolás / óravállalás nem újabb fizikai feladat.
 
 A JSON-formátum, helyi mentési kulcsok és korábbi numerikus eredmények változatlanok. Az új böngészőpróba `node tests/explain-browser.cjs`. A kinyitott családi részletek beviteli változtatáskor is nyitva maradnak; a bezárt összehasonlítás nem nyílik vissza automatikusan.
+
+## Blog és legeltetés
+
+A **Blog** fül (`blog.html`) első cikke reprodukálható elemzést és szerkeszthető összehasonlítást ad: állat saját takarmánnyal, állat vett takarmánnyal, illetve állat nélkül vett élelmiszerrel. A teljes CAPEX a termelőeszközök mellett a föld vételárát és vételi költségét is tartalmazza. Az OPEX, éves saját óra, időérték, tőkeköltség és eszközpótlási tartalék külön látszik. A Blog tőke- és időértéke elemzési tétel; nem írja át a családi tervet.
+
+A két kiinduló hivatalos adat felhasználói gyűjtésből származik: KSH országos szántóátlag, 2024, kerekített 2,4 M Ft/ha; MNB-alapkamat 5,50%, 2026.08.26-i hatállyal, szeptember 22-i megerősítéssel. A cikk dátumokat, közvetlen forráslinkeket és adatminőségi korlátokat közöl. Alsópetényi, pásztói és ecsegi ingatlanhirdetések teljes ingatlanvétellel számoló referenciaként választhatók. Mindhárom életmódban a teljes hirdetési irányár kerül a CAPEX-be; az állat nélküli változat is megveszi ugyanazt az ingatlant. Külön látszik a ténylegesen megvett és igényelt terület, a területi hiány és a teljes birtok fenntartására megadott keret. A csomagárból számolt Ft/m² csak összehasonlító mutató, nem egy olcsóbb résztelekvásárlás ára.
+
+A **Legelő** a Növények kategória külön tevékenysége. A szerkeszthető éves hasznosítható szárazanyaghozam és legeltetési napok alapján számítjuk be a füvet; a téli / kiegészítő saját takarmányhoz további szálastakarmány-föld marad. Nem vált ki gabonát vagy teljes takarmányreceptet. A legelő m²-e, költsége és órája a családi és közös terület-/költség-/munkabontásba is bekerül.
+
+A régi JSON-ok betölthetők. Legelő nélküli terv a korábbi exportverzióján marad; legelőt tartalmazó terv 4-es formátumú. Az új oldal v5 helyi munkapéldányt ír, a v4 és korábbi mentéseket megőrzi. A külön telekábra előnézete mindkét mentéstípusnál a v5 változatot részesíti előnyben.
+
+További ellenőrzések:
+
+```sh
+node --test tests/*.test.mjs
+GYOKER_PLAYWRIGHT_MODULE=/opt/codex/runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright node tests/blog-browser.cjs
+```

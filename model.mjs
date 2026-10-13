@@ -1,10 +1,18 @@
-import { CATALOGUE, DEFAULT_ASSUMPTIONS, SERVICES, NEW_ACTIVITY_IDS } from './data.mjs?v=20261013-7';
-import {defaultFoodProfile,FOOD_PRODUCTS,FOOD_PRODUCERS,foodRequirement,foodSummary} from './food.mjs?v=20261013-7';
-import {defaultWoodProfile,WOOD_FIELDS,woodRequirement,woodAtArea,woodSummary,mergeWood} from './wood.mjs?v=20261013-7';
+import { CATALOGUE, DEFAULT_ASSUMPTIONS, SERVICES, NEW_ACTIVITY_IDS } from './data.mjs?v=20261013-8';
+import {defaultFoodProfile,FOOD_PRODUCTS,FOOD_PRODUCERS,foodRequirement,foodSummary} from './food.mjs?v=20261013-8';
+import {defaultWoodProfile,WOOD_FIELDS,woodRequirement,woodAtArea,woodSummary,mergeWood} from './wood.mjs?v=20261013-8';
 
 export const clamp = (v,lo=0,hi=1) => Math.min(hi,Math.max(lo,v));
 const sum = (xs, fn=x=>x) => xs.reduce((s,x)=>s+fn(x),0);
 const blend = (min,wish,weight,locked,minimum) => locked ? wish : minimum ? min : min+(wish-min)*clamp(2*weight);
+// Pasture yield is usable dry matter; winter forage cannot be replaced by summer grass.
+export function pastureCredit(rows,needed,annualNeed=sum(rows,x=>x.feedKg||0)) {
+  const pastures=rows.filter(x=>x.id==='pasture'&&x.qty>0);
+  const capacity=sum(pastures,x=>x.feedProduced||0);
+  const days=pastures.length?Math.min(...pastures.map(x=>x.grazingDays)):0;
+  const credit=Math.min(capacity,needed,annualNeed*days/365);
+  return {capacity,days,credit};
+}
 export function calculate(plan,{minimum=false}={}) {
   const a=plan.assumptions, p=plan.preferences;
   const w=p.budgetMode==='landBudget'?p.landBudget:p.balance;
@@ -19,7 +27,7 @@ export function calculate(plan,{minimum=false}={}) {
     const c=catalogue.get(item.id),food=foodRequirement(plan,item),wood=woodRequirement(plan,item,c),self=(item.quantityMode||'manual')==='self';
     const blended=self?(wood||food).rawUnits:blend(item.min,item.wish,w[1],item.locked,minimum);
     const qty=c.unit==='m²'?blended:Math.ceil(blended-1e-9);
-    const crop=c.category!=='Állatok'&&item.id!=='firewood';
+    const crop=c.category!=='Állatok'&&!['firewood','pasture'].includes(item.id);
     const efficiency=crop?Math.max(.05,1-a.irrigationLabourSaving/100*autoLevel-a.machineryLabourSaving/100*machineLevel):1;
     const waterEfficiency=crop?1-a.irrigationWaterSaving/100*autoLevel:1;
     const row={ id:item.id,name:c.name,category:c.category,icon:c.icon,unit:c.unit,scope:item.scope,minQty:self?qty:item.locked?item.wish:item.min,qty,
@@ -28,6 +36,7 @@ export function calculate(plan,{minimum=false}={}) {
       feedKg:qty*(c.feed||0)*365,ownFeedKg:qty*(c.feed||0)*365*feedShare,feedProduced:qty*(c.feedYield||0),feedKind:c.feedKind,autoArea:0,autoSetup:0,autoMonthly:0,autoHours:0,autoPeakHours:0,
       autoRates:{areaPerKg:1/(c.feedKind==='grain'?a.grainYield:a.forageYield),setup:a.autoFeedSetup,monthly:a.autoFeedMonthly,hours:a.autoFeedHours*(1-a.machineryLabourSaving/100*machineLevel)},
     };
+    if(c.id==='pasture')row.grazingDays=c.grazingDays;
     if(food)row.food={...food,production:qty*food.usableYield,self};
     if(wood){
       row.wood={...woodAtArea(plan.wood,qty*c.area),target:wood.target,self};
@@ -46,10 +55,13 @@ export function calculate(plan,{minimum=false}={}) {
   const autoFeedByKind={};
   for(const kind of ['grain','forage']) {
     const needed=sum(rows.filter(x=>x.feedKg&&x.feedKind===kind),x=>x.feedKg*feedShare);
-    const explicit=sum(rows.filter(x=>catalogue.get(x.id).feedYield&&x.feedKind===kind),x=>x.qty*catalogue.get(x.id).feedYield);
+    const fields=rows.filter(x=>catalogue.get(x.id).feedYield&&x.feedKind===kind);
+    const pasture=kind==='forage'?pastureCredit(fields,needed,sum(rows.filter(x=>x.feedKind===kind),x=>x.feedKg||0)):null;
+    const explicit=sum(fields.filter(x=>x.id!=='pasture'),x=>x.qty*catalogue.get(x.id).feedYield)+(pasture?.credit||0);
     const yieldPerM2=kind==='grain'?a.grainYield:a.forageYield;
     const extra=Math.max(0,needed-explicit)/yieldPerM2;
     autoFeedByKind[kind]={needed,explicit,extra};
+    if(pasture?.capacity)autoFeedByKind[kind].pasture=pasture;
     for(const row of rows.filter(x=>x.feedKg&&x.feedKind===kind)) {
       const share=needed?row.feedKg*feedShare/needed:0;
       const area=extra*share;
@@ -61,7 +73,7 @@ export function calculate(plan,{minimum=false}={}) {
       row.peakHours+=row.autoPeakHours;
     }
   }
-  const cropArea=sum(rows.filter(x=>catalogue.get(x.id).category!=='Állatok'&&x.id!=='firewood'),x=>x.qty*catalogue.get(x.id).area);
+  const cropArea=sum(rows.filter(x=>catalogue.get(x.id).category!=='Állatok'&&!['firewood','pasture'].includes(x.id)),x=>x.qty*catalogue.get(x.id).area);
   const irrigationCost=cropArea*a.irrigationSetup*autoLevel;
   const machineryCost=rows.some(x=>x.id!=='firewood')?a.machinerySetup*machineLevel:0;
   const serviceRows=Object.entries(plan.serviceCatalogue).map(([id,s])=>{
@@ -118,7 +130,7 @@ function range(x,label,max) {
   if(typeof x.locked!=='boolean') throw new Error(`${label}: hibás rögzítés.`);
 }
 export function validatePlan(raw) {
-  if(!raw||![1,2,3].includes(raw.schemaVersion)) throw new Error('Ismeretlen tervformátum. 1-es, 2-es vagy 3-as verziójú családi JSON szükséges.');
+  if(!raw||![1,2,3,4].includes(raw.schemaVersion)) throw new Error('Ismeretlen tervformátum. 1-es, 2-es, 3-as vagy 4-es verziójú családi JSON szükséges.');
   const p=JSON.parse(JSON.stringify(raw));
   p.schemaVersion=2;
   p.wood??=defaultWoodProfile();
@@ -165,7 +177,7 @@ export function validatePlan(raw) {
   for(const k of Object.keys(DEFAULT_ASSUMPTIONS))number(p.assumptions[k],k,0,1e9);
   for(const k of ['irrigationLabourSaving','machineryLabourSaving','irrigationWaterSaving'])number(p.assumptions[k],k,0,95);
   if(p.assumptions.houseLandFactor<1||p.assumptions.feedShare>100||p.assumptions.contingencyPct>100||p.assumptions.designPct>100||p.assumptions.purchasePct>100||p.assumptions.grainYield<=0||p.assumptions.forageYield<=0)throw new Error('Érvénytelen arány vagy hozam az alapadatokban.');
-  if(!Array.isArray(p.catalogue)||p.catalogue.length>106)throw new Error('Hibás katalógus.');
+  if(!Array.isArray(p.catalogue)||p.catalogue.length>107)throw new Error('Hibás katalógus.');
   const ids=new Set();
   for(const c of p.catalogue) {
     if(typeof c.id!=='string'||!/^[a-z][a-z0-9-]{0,40}$/.test(c.id)||ids.has(c.id))throw new Error('Hibás vagy ismétlődő tevékenységazonosító.');
@@ -174,13 +186,14 @@ export function validatePlan(raw) {
     if('note' in c&&(typeof c.note!=='string'||c.note.length>2000))throw new Error('Hibás tevékenységmagyarázat.');
     for(const k of positiveFields)number(c[k],c.name,0,1e9);
     if(c.id==='firewood'&&(c.area<=0||c.unit!=='m²'||c.feed||c.feedYield))throw new Error('A tűzifa pozitív m²-területet kér, takarmányelszámolás nélkül.');
+    if(c.id==='pasture'){number(c.grazingDays,'Legeltetési napok',0,365);if(c.unit!=='m²'||c.area!==1||c.feedKind!=='forage'||!c.feedYield||c.feed)throw new Error('A legelő m²-ben, pozitív hasznosítható szárazanyaghozammal számol.');}
     if(c.feedKind&&!['grain','forage'].includes(c.feedKind))throw new Error('Ismeretlen takarmánytípus.');
     for(const k of ['feed','feedPrice','feedYield'])if(k in c)number(c[k],c.name,0,1e9);
     if(c.feedYield===0)throw new Error('A takarmányhozamnak pozitívnak kell lennie.');
     if(c.feed&&(!c.feedKind||!Number.isFinite(c.feedPrice)))throw new Error('Hiányzó takarmányadat.');
   }
   for(const id of NEW_ACTIVITY_IDS)if(!ids.has(id)){p.catalogue.push({...CATALOGUE.find(c=>c.id===id)});ids.add(id);}
-  if(p.catalogue.length>106)throw new Error('A bővített katalógus túl nagy.');
+  if(p.catalogue.length>107)throw new Error('A bővített katalógus túl nagy.');
   const garden=p.catalogue.find(c=>c.id==='garden'),gardenDefault=CATALOGUE.find(c=>c.id==='garden');
   if(garden){if(garden.name==='Konyhakert')garden.name=gardenDefault.name;garden.note??=gardenDefault.note;}
   if(!Array.isArray(p.items)||p.items.length>100)throw new Error('Hibás tevékenységlista.');
@@ -188,6 +201,7 @@ export function validatePlan(raw) {
   for(const i of p.items){if(!ids.has(i.id)||used.has(i.id))throw new Error('Ismeretlen vagy ismétlődő tevékenység.');used.add(i.id);range(i,i.id,1e7);if(!['family','shared'].includes(i.scope)||typeof i.owned!=='boolean')throw new Error('Hibás tevékenység-beállítás.');const c=p.catalogue.find(x=>x.id===i.id);if(c.unit!=='m²'&&(!Number.isInteger(i.min)||!Number.isInteger(i.wish)))throw new Error('Az állat-, fa- és bokorszám egész szám legyen.');}
   for(const i of p.items){i.quantityMode??='manual';i.selfTargetPct??=50;if(!['manual','self'].includes(i.quantityMode))throw new Error('Ismeretlen mennyiségi mód.');number(i.selfTargetPct,'Éves önellátási cél',0,100);if(i.quantityMode==='self'&&!FOOD_PRODUCERS[i.id]&&i.id!=='firewood')throw new Error('Ehhez a tevékenységhez még nincs élelmiszerhozam-profil.');}
   if(p.items.some(i=>i.id==='firewood'))p.schemaVersion=3;
+  if(p.items.some(i=>i.id==='pasture'))p.schemaVersion=4;
   if(!['balance','landBudget'].includes(p.preferences?.budgetMode))throw new Error('Hibás háromszögmód.');
   for(const k of ['balance','landBudget','resources']) {
     const w=p.preferences[k];if(!Array.isArray(w)||w.length!==3)throw new Error('Hibás háromszögpont.');
@@ -236,6 +250,23 @@ function reconcileSharedFeed(familyRows,sharedRows) {
     for(const row of animals){const extra=need?missing*(row.ownFeedKg/need)*row.autoRates.areaPerKg:0;row.autoArea=extra;row.autoSetup=extra*row.autoRates.setup;row.autoMonthly=extra*row.autoRates.monthly;row.autoHours=extra*row.autoRates.hours;row.autoPeakHours=row.autoHours*4;for(const [metric,auto] of Object.entries(autoMetrics))row[metric]+=row[auto];}
   }
   for(const kind of ['grain','forage']) {
+    if(kind==='forage'&&all.some(x=>x.id==='pasture')) {
+      const buckets=[sharedRows,...familyRows].map(rows=>{
+        const animals=rows.filter(x=>x.feedKind===kind&&x.ownFeedKg>0),need=sum(animals,x=>x.ownFeedKg);
+        const grass=pastureCredit(rows,need),hay=sum(rows.filter(x=>x.feedKind===kind&&x.id!=='pasture'),x=>x.feedProduced||0);
+        return {animals,need,annualNeed:sum(animals,x=>x.feedKg||0),grass,hay,missing:Math.max(0,need-hay-grass.credit)};
+      });
+      const common=buckets[0],privateBuckets=buckets.slice(1);
+      const haySurplus=Math.max(0,common.hay+common.grass.credit-common.need);
+      const deficit=sum(privateBuckets,b=>b.missing);
+      for(const b of privateBuckets)b.missing=Math.max(0,b.missing-(deficit?Math.min(haySurplus,deficit)*b.missing/deficit:0));
+      const grassSurplus=Math.max(0,common.grass.capacity-common.grass.credit);
+      const seasonal=privateBuckets.map(b=>Math.min(b.missing,Math.max(0,b.annualNeed*common.grass.days/365-b.grass.credit)));
+      const eligible=sum(seasonal);
+      privateBuckets.forEach((b,i)=>b.missing=Math.max(0,b.missing-(eligible?Math.min(grassSurplus,eligible)*seasonal[i]/eligible:0)));
+      for(const b of buckets)addArea(b.animals,b.missing);
+      continue;
+    }
     const sharedAnimals=sharedRows.filter(x=>x.feedKind===kind&&x.ownFeedKg>0);
     const sharedNeed=sum(sharedAnimals,x=>x.ownFeedKg),sharedYield=sum(sharedRows.filter(x=>x.feedKind===kind),x=>x.feedProduced||0);
     addArea(sharedAnimals,Math.max(0,sharedNeed-sharedYield));
@@ -267,13 +298,16 @@ export function aggregate(plans,{decisions={},landShares=[],workHours=[],hourlyR
     if(participating[0].row.unit!=='m²'&&(!Number.isInteger(qty)||!Number.isInteger(minimum)))throw new Error('A közös darabszám egész szám legyen.');
     const row={id,name:participating[0].row.name,category:participating[0].row.category,icon:participating[0].row.icon,unit:participating[0].row.unit,qty,minQty:minimum,scope:'shared',minimumArea:0};
     for(const metric of sharedMetrics)row[metric]=metric==='autoArea'?0:qty*Math.max(...participating.map(x=>(x.row[metric]-(x.row[autoMetrics[metric]]||0))/x.row.qty));
+    row.feedKg=qty*Math.max(...participating.map(x=>(x.row.feedKg||0)/x.row.qty));
     row.ownFeedKg=qty*Math.max(...participating.map(x=>(x.row.ownFeedKg||0)/x.row.qty));
     row.feedProduced=qty*Math.min(...participating.map(x=>(x.row.feedProduced||0)/x.row.qty));
     row.feedKind=participating[0].row.feedKind;
+    if(id==='pasture')row.grazingDays=Math.min(...participating.map(x=>x.row.grazingDays));
     row.autoRates=Object.fromEntries(['areaPerKg','setup','monthly','hours'].map(key=>[key,Math.max(...participating.map(x=>x.row.autoRates?.[key]||0))]));
     const minRow={...row,qty:minimum};
     for(const metric of sharedMetrics)minRow[metric]=metric==='autoArea'?0:minimum*Math.max(...participating.map(x=>{const original=x.min.qty?x.min:x.row;return (original[metric]-(original[autoMetrics[metric]]||0))/original.qty;}));
     if(id==='firewood'){mergeWood(row,participating.map(x=>x.row));mergeWood(minRow,participating.map(x=>x.min.qty?x.min:x.row));}
+    minRow.feedKg=minimum*(qty?row.feedKg/qty:Math.max(...participating.map(x=>(x.row.feedKg||0)/x.row.qty)));
     minRow.ownFeedKg=minimum*(qty?row.ownFeedKg/qty:Math.max(...participating.map(x=>(x.row.ownFeedKg||0)/x.row.qty)));
     minRow.feedProduced=minimum*(qty?row.feedProduced/qty:Math.min(...participating.map(x=>(x.row.feedProduced||0)/x.row.qty)));
     for(const {index,row:original,min} of participating) {
