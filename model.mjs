@@ -1,4 +1,5 @@
-import { CATALOGUE, DEFAULT_ASSUMPTIONS, SERVICES } from './data.mjs?v=20261013-3';
+import { CATALOGUE, DEFAULT_ASSUMPTIONS, SERVICES } from './data.mjs?v=20261013-4';
+import {defaultFoodProfile,FOOD_PRODUCTS,FOOD_PRODUCERS,foodRequirement,foodSummary} from './food.mjs?v=20261013-4';
 
 export const clamp = (v,lo=0,hi=1) => Math.min(hi,Math.max(lo,v));
 const sum = (xs, fn=x=>x) => xs.reduce((s,x)=>s+fn(x),0);
@@ -14,17 +15,19 @@ export function calculate(plan,{minimum=false}={}) {
   const machineLevel=p.machinery?clamp(labour*2):0;
   const catalogue=new Map(plan.catalogue.map(x=>[x.id,x]));
   const rows=plan.items.map(item=>{
-    const c=catalogue.get(item.id), blended=blend(item.min,item.wish,w[1],item.locked,minimum);
+    const c=catalogue.get(item.id),food=foodRequirement(plan,item),self=(item.quantityMode||'manual')==='self';
+    const blended=self?food.rawUnits:blend(item.min,item.wish,w[1],item.locked,minimum);
     const qty=c.unit==='m²'?blended:Math.ceil(blended-1e-9);
     const crop=c.category!=='Állatok';
     const efficiency=crop?Math.max(.05,1-a.irrigationLabourSaving/100*autoLevel-a.machineryLabourSaving/100*machineLevel):1;
     const waterEfficiency=crop?1-a.irrigationWaterSaving/100*autoLevel:1;
-    const row={ id:item.id,name:c.name,category:c.category,icon:c.icon,unit:c.unit,scope:item.scope,minQty:item.locked?item.wish:item.min,qty,
+    const row={ id:item.id,name:c.name,category:c.category,icon:c.icon,unit:c.unit,scope:item.scope,minQty:self?qty:item.locked?item.wish:item.min,qty,
       area:qty*c.area,setup:item.owned?0:qty*c.setup,monthly:qty*c.monthly,water:qty*c.water*waterEfficiency,
       hours:qty*c.hours*efficiency,peakHours:qty*c.hours*c.peak*efficiency,peakWater:qty*c.water*c.waterPeak*waterEfficiency,
       feedKg:qty*(c.feed||0)*365,ownFeedKg:qty*(c.feed||0)*365*feedShare,feedProduced:qty*(c.feedYield||0),feedKind:c.feedKind,autoArea:0,autoSetup:0,autoMonthly:0,autoHours:0,autoPeakHours:0,
       autoRates:{areaPerKg:1/(c.feedKind==='grain'?a.grainYield:a.forageYield),setup:a.autoFeedSetup,monthly:a.autoFeedMonthly,hours:a.autoFeedHours*(1-a.machineryLabourSaving/100*machineLevel)},
     };
+    if(food)row.food={...food,production:qty*food.usableYield,self};
     if(c.feed) row.monthly+=row.feedKg/12*(1-feedShare)*c.feedPrice;
     return row;
   });
@@ -85,9 +88,11 @@ export function calculate(plan,{minimum=false}={}) {
   const affordableLandBudget=Math.max(0,landBudget);
   const maximumArea=quote>0?affordableLandBudget/quote:null;
   const hours=sum(rows,x=>x.hours),peakHours=sum(rows,x=>x.peakHours);
+  const feedLand={holding:sum(rows.filter(x=>x.category==='Állatok'),x=>x.area-x.autoArea),explicit:sum(rows.filter(x=>catalogue.get(x.id).feedYield),x=>x.area),extra:sum(rows,x=>x.autoArea),annualFeed:sum(rows,x=>x.feedKg)};
   const domesticWater=(plan.family.adults+plan.family.children)*a.personWater*365/12;
   const water=domesticWater+sum(rows,x=>x.water),peakWater=domesticWater+sum(rows,x=>x.peakWater);
-  return {homeArea,reserveMonths,feedShare,rows,serviceRows,house,design,farm,infrastructure,upfront,contingency,monthly,reserve,landBudget,cashForLand,homeLand,siteLand,landArea,hours,peakHours,water,peakWater,ownConstructionHours,autoFeedByKind,nonLandTotal,budgetGap,landPrice,purchaseFees,totalWithLand,totalGap,affordableLandBudget,maximumArea,
+  const foodResults=foodSummary([plan],[{rows}]);
+  return {homeArea,reserveMonths,feedShare,rows,serviceRows,house,design,farm,infrastructure,upfront,contingency,monthly,reserve,landBudget,cashForLand,homeLand,siteLand,landArea,hours,peakHours,water,peakWater,ownConstructionHours,autoFeedByKind,nonLandTotal,budgetGap,landPrice,purchaseFees,totalWithLand,totalGap,affordableLandBudget,maximumArea,feedLand,foodResults,
     breakdown:[{name:'Házépítés',value:house,color:'#d78c53'},{name:'Tervezés',value:design,color:'#e9ba7c'},{name:'Gazdaság indítása',value:farm,color:'#718a51'},{name:'Infrastruktúra, eszközök',value:infrastructure,color:'#99aaa3'},{name:'Biztonsági keret',value:contingency,color:'#d5bfa0'},{name:'Működési tartalék',value:reserve,color:'#8faeb4'},{name:'Telekvásárlásra megmaradó pénz',value:Math.max(0,cashForLand),color:'#254f3c'}]};
 }
 
@@ -100,8 +105,12 @@ function range(x,label,max) {
   if(typeof x.locked!=='boolean') throw new Error(`${label}: hibás rögzítés.`);
 }
 export function validatePlan(raw) {
-  if(!raw||raw.schemaVersion!==1) throw new Error('Ismeretlen tervformátum. 1-es verziójú családi JSON szükséges.');
+  if(!raw||![1,2].includes(raw.schemaVersion)) throw new Error('Ismeretlen tervformátum. 1-es vagy 2-es verziójú családi JSON szükséges.');
   const p=JSON.parse(JSON.stringify(raw));
+  p.schemaVersion=2;
+  p.food??=defaultFoodProfile();
+  for(const [id] of Object.entries(FOOD_PRODUCTS)){const c=p.food.consumption?.[id];if(!c||!['estimated','manual'].includes(c.mode))throw new Error('Hiányzó vagy hibás élelmiszer-fogyasztási profil.');number(c.annualPerPerson,'Éves egy főre jutó fogyasztás',0,1e6);number(c.annualHousehold,'Éves családi fogyasztás',0,1e9);}
+  for(const [id] of Object.entries(FOOD_PRODUCERS)){const c=p.food.production?.[id];if(!c)throw new Error('Hiányzó éves élelmiszerhozam.');number(c.annualYield,'Éves hozam',.0001,1e9);number(c.usablePct,'Felhasználható termés hányada',.01,100);}
   p.landQuote??={unitPrice:0};
   number(p.landQuote.unitPrice,'Kézzel megadott telekár',0,1e9);
   if(typeof p.family?.name!=='string'||!p.family.name.trim()||p.family.name.length>80) throw new Error('A családnév 1–80 karakter lehet.');
@@ -144,6 +153,7 @@ export function validatePlan(raw) {
   if(!Array.isArray(p.items)||p.items.length>100)throw new Error('Hibás tevékenységlista.');
   const used=new Set();
   for(const i of p.items){if(!ids.has(i.id)||used.has(i.id))throw new Error('Ismeretlen vagy ismétlődő tevékenység.');used.add(i.id);range(i,i.id,1e7);if(!['family','shared'].includes(i.scope)||typeof i.owned!=='boolean')throw new Error('Hibás tevékenység-beállítás.');const c=p.catalogue.find(x=>x.id===i.id);if(c.unit!=='m²'&&(!Number.isInteger(i.min)||!Number.isInteger(i.wish)))throw new Error('Az állat-, fa- és bokorszám egész szám legyen.');}
+  for(const i of p.items){i.quantityMode??='manual';i.selfTargetPct??=50;if(!['manual','self'].includes(i.quantityMode))throw new Error('Ismeretlen mennyiségi mód.');number(i.selfTargetPct,'Éves önellátási cél',0,100);if(i.quantityMode==='self'&&!FOOD_PRODUCERS[i.id])throw new Error('Ehhez a tevékenységhez még nincs élelmiszerhozam-profil.');}
   if(!['balance','landBudget'].includes(p.preferences?.budgetMode))throw new Error('Hibás háromszögmód.');
   for(const k of ['balance','landBudget','resources']) {
     const w=p.preferences[k];if(!Array.isArray(w)||w.length!==3)throw new Error('Hibás háromszögpont.');
@@ -155,7 +165,7 @@ export function validatePlan(raw) {
   p.sources??={};
   if(!p.sources||typeof p.sources!=='object'||Array.isArray(p.sources)||Object.keys(p.sources).length>1000)throw new Error('Hibás forrásjegyzék.');
   for(const [path,source] of Object.entries(p.sources)) {
-    if(!/^(assumptions|catalogue|serviceCatalogue)\.[a-zA-Z0-9.-]+$/.test(path)||path.split('.').some(x=>['__proto__','prototype','constructor'].includes(x)))throw new Error('Hibás forrásazonosító.');
+    if(!/^(assumptions|catalogue|serviceCatalogue|food)\.[a-zA-Z0-9.-]+$/.test(path)||path.split('.').some(x=>['__proto__','prototype','constructor'].includes(x)))throw new Error('Hibás forrásazonosító.');
     if(!source||typeof source!=='object')throw new Error('Hibás forrásadat.');
     for(const k of ['title','url','date','note'])if(k in source&&(typeof source[k]!=='string'||source[k].length>2000))throw new Error('Hibás forrásszöveg.');
     if(source.url){let u;try{u=new URL(source.url)}catch{throw new Error('Érvénytelen forráslink.')};if(!['https:','http:'].includes(u.protocol)||u.username||u.password)throw new Error('Csak nyilvános HTTP/HTTPS forráslink adható meg.');}
@@ -278,7 +288,8 @@ export function aggregate(plans,{decisions={},landShares=[],workHours=[],hourlyR
   const quantities=new Map();
   for(const item of [...familyOnly,...merged]) {const prev=quantities.get(item.id)||{id:item.id,name:item.name,unit:item.unit,icon:item.icon,qty:0};prev.qty+=item.qty;quantities.set(item.id,prev);}
   const plotFamilies=plans.map((p,i)=>({name:p.family.name,homeArea:results[i].homeArea,homeLand:results[i].homeLand,site:{...p.site,storage:merged.some(x=>x.id==='site-outbuildings')?0:p.site.storage},items:retained[i],totalArea:rows[i].landArea-sharedArea/n}));
-  return {rows,results,mins,conflicts,merged,unresolved,sharedHours,sharedShortage,ownShortages,landBudgetLimit,pool,landArea,minimumArea,maximumArea,monthly,quantities:[...quantities.values()],totalPledge:sum(rows,x=>x.pledge||0),allPledged:rows.every(x=>x.pledge!==null),plotFamilies,
+  const foodResults=foodSummary(plans,results,merged);
+  return {rows,results,mins,conflicts,merged,unresolved,sharedHours,sharedShortage,ownShortages,landBudgetLimit,pool,landArea,minimumArea,maximumArea,monthly,quantities:[...quantities.values()],totalPledge:sum(rows,x=>x.pledge||0),allPledged:rows.every(x=>x.pledge!==null),plotFamilies,foodResults,
     hours:sum(rows,x=>x.requiredHours)+sharedShortage,peakHours:sum(rows,x=>x.peakHours),water:sum(rows,x=>x.water),
-    feasible:!unresolved&&rows.every(x=>x.landBudget>=0)&&(externalHelp||(!sharedShortage&&ownShortages.every(x=>x===0)))&&(maximumArea===null||maximumArea>=landArea)};
+    feasible:foodResults.every(x=>x.shortage<=1e-6)&&!unresolved&&rows.every(x=>x.landBudget>=0)&&(externalHelp||(!sharedShortage&&ownShortages.every(x=>x===0)))&&(maximumArea===null||maximumArea>=landArea)};
 }

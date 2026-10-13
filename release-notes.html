@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="hu">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#254f3c">
+  <meta name="description" content="A Gyökér birtoktervező újdonságai: milyen problémát oldanak meg és hogyan használd őket.">
+  <title>Újdonságok · Gyökér</title>
+  <link rel="stylesheet" href="style.css?v=20261013-4">
+  <link rel="stylesheet" href="release-notes.css?v=20261013-4">
+</head>
+<body>
+  <header class="site-header"><a href="index.html" class="brand" aria-label="Gyökér kezdőlap">gyökér<span class="brand-dot">.</span></a><nav aria-label="Fő navigáció"><a class="nav-button nav-link" href="index.html">Kalkulátor</a><a class="nav-button nav-link" href="plot-preview.html">Telekábra előnézete</a><a class="nav-button nav-link active" href="release-notes.html" aria-current="page">Újdonságok</a></nav><span class="header-note">EGY ÚJ ÉLET TERVE</span></header>
+  <main class="releases">
+    <div class="release-intro"><div class="eyebrow">VÁLTOZÁSOK ÉS HASZNÁLAT</div><h1>Mi lett <em>könnyebb?</em></h1><p>Itt látod, mi került a tervezőbe, milyen kérdésben segít, és hol tudod kipróbálni. A legfrissebb változás van legfelül.</p><div class="release-jump"><a href="#food">Legfrissebb változat</a><a href="#maps">Telektérképek</a><a href="#clarity">Árak és magyarázatok</a><a href="#first">Családi és közös tervezés</a></div></div>
+
+    <article id="food" class="panel release-entry current-release">
+      <div class="release-meta"><time datetime="2026-10-13">2026. október 13.</time><span class="badge green">Publikált · önellátási mód</span></div>
+      <h2>Önellátási célból állatszám és termőterület</h2>
+      <p class="release-lead">Már akkor is összeállítható a terv, ha azt tudod, a tej, tojás, hús, zöldség, gyümölcs vagy gabona mekkora részét szeretnéd saját termelésből fedezni. Mézhez is elérhető profil.</p>
+      <div class="release-points">
+        <section><h3>Milyen problémát old meg?</h3><p>Nem kell előre tudnod, hány tehén, fa vagy hány m² kert szükséges. A termékigény és az éves hozam alapján kiszámoljuk a mennyiséget, majd hozzá a földet, költséget, vizet és munkát.</p></section>
+        <section><h3>Hogyan használd?</h3><ol><li>Vedd fel a megfelelő tevékenységet a családi tervbe.</li><li>Válaszd az <strong>Élelmiszer-önellátási célt adok meg</strong> módot, és állítsd a százalékot.</li><li>Az éves családi élelmiszerigénynél ellenőrizd a létszámos becslést, vagy írd be a saját éves fogyasztásotokat.</li><li>A termelő kártyáján vagy az Alapadatok fülön ellenőrizd a hozamot és a felhasználható hányadot.</li><li>A képletnél nézd meg a mennyiséget, a kerekítést és a többletet.</li></ol></section>
+      </div>
+      <div class="guide-callout">Ha a célhoz 0,2 tehén kellene, <strong>1 egész tehénnel</strong> számolunk. Külön látszik a cél feletti és a teljes családi fogyasztás feletti termelés. A százalékos cél rögzített marad a háromszögeken is; kézi módra visszaváltva a korábbi minimum és kívánt mennyiség visszatér.</div>
+      <p class="release-limit"><strong>Az adatok állapota:</strong> a fogyasztási és hozamértékek módosítható, forrás nélküli próbaértékek. Minden adat külön forrást kaphat. Az eredmény éves mennyiségi fedezet; nem napi ellátási vagy tápanyag-garancia. A gyümölcshozam termő növényeket feltételez. A többlet nem automatikus bevétel.</p>
+      <h3>Miért kell több föld a saját takarmányhoz?</h3><p>A tej önellátási százaléka és az állatok saját takarmányának százaléka két külön beállítás. A takarmányrész most külön megmutatja a tartási helyet, a felvett takarmányföldet és a még szükséges plusz földet. A már felvett termést előbb beszámítjuk; az engedélyezett háromszög által módosított tényleges arány is látszik.</p>
+      <p><strong>Használat:</strong> a gazdasági tevékenységek alatt állítsd az <strong>Állatok saját termelésű takarmánya</strong> értéket. 0%-nál nem adunk automatikus takarmányföldet; a külön felvett takarmányterület megmarad. A képlet megmutatja a változás okát.</p>
+      <h3>Közös önellátás a reveal partyn</h3><p>Az összes család fogyasztását és a termelési célokat összevetjük a termeléssel. Az egyeztetett közös állományt egyszer számoljuk. Eltérő hozamoknál a kisebb felhasználható hozamot vesszük alapul, és hiányt jelzünk, ha az elfogadott közös mennyiség kevés. A termékek családok közötti elosztása külön megállapodás.</p>
+      <div class="release-compat"><h3>Mi történik a korábbi tervekkel?</h3><p>A régi JSON-ok betölthetők, és kézi módban maradnak. A publikált számításokkal végzett 98 összehasonlításban minden korábbi eredmény egyezett. Az új helyi mentés külön készül, a régi mentés megmarad. Az új export 2-es verziójú: a régi oldal elutasítja, így nem értelmezi félre az önellátási célt.</p><p><strong>Frissítés után:</strong> a régi tervet betöltve továbbra is kézi mennyiségekkel számolunk. Önellátási százalékra te válthatsz át az adott tevékenység kártyáján.</p></div>
+    </article>
+
+    <article id="maps" class="panel release-entry">
+      <div class="release-meta"><time datetime="2026-10-13">2026. október 13.</time><span class="badge green">Publikált · 280ebbd</span></div>
+      <h2>Láthatóvá vált a birtok</h2><p class="release-lead">Felülnézeti térképen, területarányos zónákban jelenik meg a terv. Kis házak, fák, ágyások és üvegházak segítenek felismerni a részeket.</p>
+      <div class="release-points"><section><h3>Milyen problémát old meg?</h3><p>A m²-összegek mellé látható arányokat ad: kiderül, mi foglal sok helyet, és hogyan oszlik meg a családi és közös használat.</p></section><section><h3>Hogyan használd?</h3><p>A családi terv telektérképén vagy a reveal party közös térképén kattints egy számozott zónára vagy a jelmagyarázatra. A családokat színes határvonal és név jelöli; az elfogadott közös rész külön blokk.</p><p>A külön előnézetben fiktív példák, saját helyi terv és betöltött családi JSON is megnyitható.</p></section></div>
+      <p class="release-limit">A zónák területaránya számított, a kis rajzok jelképesek. Az ábra nem konkrét telekforma vagy építészeti elrendezés. A teljes izometrikus birtoknézet későbbi fejlesztés.</p><a class="button secondary nav-link" href="plot-preview.html">Telekábra előnézete →</a>
+    </article>
+
+    <article id="clarity" class="panel release-entry">
+      <div class="release-meta"><time datetime="2026-10-13">2026. október 13.</time><span class="badge green">Publikált · 39806db</span></div>
+      <h2>Külön látszik a telek ára, a keret és a hiány</h2><p class="release-lead">A 0 Ft-os földkeret már nem keverhető össze egy ingyenes telek árával. Megadott egységárból külön számítjuk a vételárat, a vásárlási járulékokat és a teljes terv finanszírozási hiányát.</p>
+      <div class="release-points"><section><h3>Milyen problémát old meg?</h3><p>Egy túl drága ház vagy gazdaság már telekvásárlás előtt felélheti a keretet. Az oldal külön megmutatja ezt a hiányt, és elkülöníti a „mennyi kell a telekre?” és „mennyi marad rá?” kérdést.</p></section><section><h3>Hogyan használd?</h3><p>A család és keret részben írd be a <strong>Telekár · Ft/m²</strong> értéket egy konkrét ajánlatból vagy saját feltételezésből. A 0 vagy üres mező azt jelenti, hogy az ár ismeretlen.</p><p>A <strong>?</strong> jelekre mutatva vagy koppintva magyarázat nyílik. A háromszög csúcsának nevére kattintva részletes leírás jelenik meg. Az Útmutató fül lépésről lépésre végigvezet a tervezésen.</p></section></div>
+      <p class="release-limit">A telekár saját bemenet, nem megyei vagy járási piaci elemzés. A vásárlási járulék módosítható költségbecslés, nem megállapított illeték.</p>
+    </article>
+
+    <article id="first" class="panel release-entry">
+      <div class="release-meta"><time datetime="2026-10-13">2026. október 13.</time><span class="badge green">Publikált · 6195be7</span></div>
+      <h2>Családi tervből közös döntés</h2><p class="release-lead">Az első verzió összeköti a házépítést, a gazdaságot, az infrastruktúrát és a tartalékokat. Megmutatja a földigényt, a telekvásárlási keretet, a havi kiadást, valamint a víz- és munkaigényt.</p>
+      <div class="release-points"><section><h3>Milyen problémát old meg?</h3><p>A családok külön terveit egy közös beszélgetéshez rendezett formába hozza. Láthatóvá válnak a pénzügyi és munkakor­látok, a közösnek javasolt tételek és az eltérő prioritások.</p></section><section><h3>Hogyan használd?</h3><ol><li>Családonként töltsétek ki és mentsétek a JSON-t.</li><li>A reveal partyn töltsétek be a családi fájlokat.</li><li>Egyeztessétek, mely tételek maradnak külön, és melyekből legyen egy közös mennyiség.</li><li>Adjátok meg a földvásárlási arányokat, közös munkaórákat és opcionális havi pénzvállalásokat.</li><li>Mentsétek a közös munkamenetet az egyeztetésekkel együtt.</li></ol></section></div>
+      <p class="release-limit">A közös jelölés nem automatikus összevonás. A legszűkebb egyéni keret korlátozza a közös telekvásárlást; pénzügyi kiegyenlítést nem alkalmazunk automatikusan. Az alapadatok forrásai és ellenőrzési állapota az Alapadatok fülön látható.</p>
+    </article>
+    <p class="release-footer">Új bejegyzéskor rögzítjük a dátumot, a publikálási állapotot, a megoldott problémát, a használat lépéseit és a terveket érintő változásokat.</p>
+    <a class="button primary nav-link" href="index.html">Vissza a tervezőhöz →</a>
+  </main>
+</body>
+</html>

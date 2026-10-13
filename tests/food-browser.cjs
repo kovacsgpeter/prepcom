@@ -1,0 +1,43 @@
+const assert=require('node:assert/strict');
+const fs=require('node:fs');const os=require('node:os');const path=require('node:path');
+const {chromium}=require(process.env.GYOKER_PLAYWRIGHT_MODULE||'playwright');
+(async()=>{
+ const output=fs.mkdtempSync(path.join(os.tmpdir(),'gyoker-food-'));
+ const browser=await chromium.launch({executablePath:process.env.GYOKER_CHROMIUM_EXECUTABLE||'/usr/bin/chromium',headless:true,args:['--no-sandbox']});
+ const page=await browser.newPage({viewport:{width:1440,height:1000},acceptDownloads:true});const errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto(process.env.GYOKER_BASE_URL||'http://127.0.0.1:8000');
+ await page.locator('#new-activity').selectOption('cowmilk');await page.locator('#add-activity').click();
+ await page.locator('[data-path="items.3.quantityMode"]').selectOption('self');
+ const textOf=async el=>(await el.innerText()).replace(/\s/g,' ');const result=page.locator('[data-self-result="cowmilk"]');assert.ok((await textOf(result)).includes('1 állat'));assert.ok((await textOf(result)).includes('50%'));
+ await page.locator('.food-profile>summary').click();
+ await page.locator('[data-path="food.consumption.milk.mode"]').selectOption('manual');
+ await page.locator('[data-path="food.consumption.milk.annualHousehold"]').fill('1000');
+ assert.ok((await textOf(result)).includes('2700'));assert.ok((await textOf(result)).includes('2200'));
+ await page.locator('.activity-card').filter({has:page.locator('[data-self-result="cowmilk"]')}).locator('.food-yield>summary').click();
+ await page.locator('#family-inputs [data-path="food.production.cowmilk.annualYield"]').fill('2000');assert.ok((await textOf(result)).includes('1600'));
+ await page.locator('#family-inputs [data-path="food.production.cowmilk.annualYield"]').fill('4000');
+ await page.locator('input[type="number"][data-path="items.3.selfTargetPct"]').fill('0');assert.ok((await textOf(result)).includes('0 állat'));
+ await page.locator('input[type="number"][data-path="items.3.selfTargetPct"]').fill('50');assert.equal(await page.locator('input[type="range"][data-path="items.3.selfTargetPct"]').inputValue(),'50');
+ await page.locator('[data-path="preferences.feedFlexible"]').uncheck();await page.locator('#family-inputs [data-path="assumptions.feedShare"]').fill('0');const small=await page.locator('.result-main h2').innerText();
+ await page.locator('#family-inputs [data-path="assumptions.feedShare"]').fill('100');const large=await page.locator('.result-main h2').innerText();assert.notEqual(large,small);assert.ok((await textOf(page.locator('#feed-explanation'))).includes('Most számított saját takarmány: 100%'));
+ assert.ok((await textOf(page.locator('#feed-explanation'))).includes('1,14 ha')); // 14 kg/day * 365 / .45, plus hens' grain is separate.
+ await page.locator('[data-path="items.3.quantityMode"]').selectOption('manual');assert.equal(await page.locator('[data-path="items.3.wish"]').inputValue(),'4');await page.locator('[data-path="items.3.quantityMode"]').selectOption('self');assert.ok((await textOf(result)).includes('1 állat'));
+ const source=page.locator('#family-inputs .activity-card').filter({has:page.locator('[data-self-result="cowmilk"]')}).locator('.food-yield');if(!await source.evaluate(el=>el.open))await source.locator('summary').first().click();await source.locator('.source-editor').first().locator('summary').click();await source.locator('[data-source="food.production.cowmilk.annualYield"][data-source-field="url"]').fill('https://example.com/yield-diary');await source.locator('[data-source="food.production.cowmilk.annualYield"][data-source-field="url"]').blur();
+ const download=page.waitForEvent('download');await page.locator('#save-family').click();const dl=await download;const savedPath=path.join(output,'family.json');await dl.saveAs(savedPath);const saved=JSON.parse(fs.readFileSync(savedPath));assert.equal(saved.plan.sources['food.production.cowmilk.annualYield'].url,'https://example.com/yield-diary');assert.equal(saved.plan.schemaVersion,2);assert.equal(saved.plan.items[3].quantityMode,'self');assert.equal(saved.plan.food.consumption.milk.annualHousehold,1000);
+ await page.getByRole('button',{name:'Reveal party'}).click();await page.locator('#add-current').click();assert.ok((await textOf(page.locator('#group-content .food-card'))).includes('3200'));
+ await page.getByRole('button',{name:'Családi terv',exact:true}).click();await page.setViewportSize({width:390,height:844});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth),390);
+ await page.evaluate(()=>{document.querySelector('#toast').hidden=true;for(const d of document.querySelectorAll('.food-yield'))d.open=false;});await page.locator('.activity-card').filter({has:page.locator('[data-self-result="cowmilk"]')}).screenshot({path:path.join(output,'milk-goal-mobile.png')});
+ await page.reload();assert.equal(await page.locator('[data-path="items.3.quantityMode"]').inputValue(),'self');assert.ok((await textOf(result)).includes('2200'));
+ const legacy=structuredClone(saved.plan);legacy.schemaVersion=1;delete legacy.food;for(const key of Object.keys(legacy.sources))if(key.startsWith('food.'))delete legacy.sources[key];for(const item of legacy.items){delete item.quantityMode;delete item.selfTargetPct;}
+ const legacyText=JSON.stringify(legacy),legacyGroup=JSON.stringify({families:[{plan:legacy}],config:{}});
+ const migrationContext=await browser.newContext();await migrationContext.addInitScript(({legacyText,legacyGroup})=>{localStorage.setItem('gyoker-family-v1',legacyText);localStorage.setItem('gyoker-group-v1',legacyGroup);},{legacyText,legacyGroup});
+ const migrated=await migrationContext.newPage();migrated.on('pageerror',e=>errors.push(e.message));await migrated.goto(process.env.GYOKER_BASE_URL||'http://127.0.0.1:8000');
+ assert.equal(await migrated.locator('[data-path="items.3.quantityMode"]').inputValue(),'manual');
+ await migrated.locator('[data-path="family.name"]').fill('Átállás tesztje');
+ assert.equal(await migrated.evaluate(()=>localStorage.getItem('gyoker-family-v1')),legacyText);assert.equal(await migrated.evaluate(()=>localStorage.getItem('gyoker-group-v1')),legacyGroup);
+ assert.equal((await migrated.evaluate(()=>JSON.parse(localStorage.getItem('gyoker-family-v2')))).schemaVersion,2);
+ await migrated.getByRole('button',{name:'Reveal party'}).click();assert.equal(await migrated.locator('.family-chip').count(),1);
+ await migrationContext.close();
+await page.getByRole('link',{name:'Újdonságok',exact:true}).click();await page.locator('#food').waitFor();assert.ok((await page.locator('#food').innerText()).includes('Publikált · önellátási mód'));assert.equal(await page.locator('.release-entry').count(),4);assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth),390);await page.screenshot({path:path.join(output,'release-notes-mobile.png'),fullPage:true});await page.setViewportSize({width:1440,height:1000});await page.screenshot({path:path.join(output,'release-notes-desktop.png'),fullPage:true});
+ assert.deepEqual(errors,[]);await browser.close();console.log('PASS: self goal, consumption override, yield editing, integer surplus, zero goal, synchronized slider, feed land trace, manual-mode preservation, JSON, group food summary, mobile, reload and preservation of legacy family/community localStorage');console.log('Artifacts:',output);
+})().catch(e=>{console.error(e);process.exit(1)});

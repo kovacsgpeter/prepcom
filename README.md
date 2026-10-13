@@ -54,7 +54,7 @@ További adatkutatás: konyhakerti és gyümölcsös munka/víz; állatonkénti 
 ## Ellenőrzés
 
 ```sh
-node --test tests/model.test.mjs tests/plot.test.mjs
+node --test tests/model.test.mjs tests/plot.test.mjs tests/food.test.mjs
 ```
 
 A tesztek a pénzügyi korlátokat, zárt költségelszámolást, darabszámokat, takarmány beszámítását, közös tételeket, munkadíj-egyenleget, importvalidálást és a geometriai vezérlőt ellenőrzik. A felület asztali és mobil Chromium böngészőben is ellenőrzött; a részletek a `VALIDATION.md` fájlban.
@@ -64,3 +64,19 @@ A tesztek a pénzügyi korlátokat, zárt költségelszámolást, darabszámokat
 Nyisd meg a `plot-preview.html` oldalt ugyanazon a HTTP-kiszolgálón vagy a GitHub Pagesen. A külön előnézet családi és háromcsaládos fiktív mintát, valamint a böngészőben mentett saját családi / közös tervet mutatja. Saját családi JSON is betölthető feltöltés és a helyi mentés felülírása nélkül. A térkép számozott zónái és a jelmagyarázat kattintással, koppintással vagy billentyűzettel kiválaszthatók.
 
 A zónák téglalap-elrendezése megőrzi a számított területarányokat; a kis rajzok nem méretarányos épület- vagy állatrajzok. Közös térképnél az egyeztetett takarmánytermést és tárolóterületet egyszer számoljuk. A nulla területű közös eszközök a térkép alatti szövegben szerepelnek. A teljesen izometrikus, térhatású birtoknézet későbbi fejlesztés; a jelenlegi nézet felülnézeti.
+
+## Önellátási mód
+
+Tej, tojás, hús, zöldség, gyümölcs, élelmezési gabona és méz éves saját fedezetét is meg lehet adni. A család létszámából becsült fogyasztás termékenként saját éves értékre cserélhető. A célmennyiség / felhasználható éves hozam adja a szükséges állat-, növény- vagy m²-mennyiséget. Állatot, fát és bokrot felfelé egészre kerekítünk; a cél feletti és a teljes családi fogyasztás feletti többlet külön látszik. A cél rögzített marad a háromszögeken is. A kézi mód korábbi minimum / kívánt / rögzítés értékei visszaváltáskor megmaradnak.
+
+A `food.mjs` fogyasztási és hozamértékei **forrás nélküli tervezési próbaértékek**, nem igazolt országos átlagok. Minden szám szerkeszthető és külön forrásolható az Alapadatok fülön. Az éves fedezet nem tápanyag-fedezet, folyamatos napi ellátás vagy frissen telepített gyümölcsös azonnali termése. Húsnál a megújított állomány éves termelési profilját kell megadni. A többlet nem automatikus árbevétel; a megélhetési kiadás nem csökken tőle.
+
+A takarmányarány külön bemenet: a tényleges saját arányból kiszámolt éves igényből előbb levonjuk a megadott takarmányföld termését, majd a hiány / hozam adja a további földet. A felület a tartási helyet, a már felvett takarmányföldet és a további földet külön megmutatja, valamint jelzi a háromszög által módosított tényleges arányt.
+
+A régi, 1-es JSON betölthető, kézi módban marad, és a korábbi számítási eredményei megmaradnak. Az új export 2-es verziójú; a régi kliens ezt elutasítja, így nem értelmezi félre az önellátási célt. A böngészős mentés `gyoker-family-v2` / `gyoker-group-v2` kulcsokra kerül; a korábbi v1 mentést csak olvassuk az átálláshoz, és nem írjuk felül. A külön térképelőnézet mindkét mentési verzióból tud olvasni.
+
+Az új önellátási és mentésátállási böngészőpróba: `node tests/food-browser.cjs`, ugyanazokkal a Playwright-beállításokkal, mint a meglévő felületteszt.
+
+## Újdonságok oldal
+
+A `release-notes.html` a kalkulátor felső menüjéből érhető el. Minden bejegyzés dátumot és publikálási állapotot, a megoldott problémát, használati lépéseket és korlátokat tartalmaz. A publikált bejegyzésekhez a Git-commit rövid azonosítója is szerepel. Az önellátási fejlesztés saját bejegyzést kapott. Új kiadáskor a dátumot és publikálási állapotot is frissíteni kell.

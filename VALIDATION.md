@@ -2,7 +2,7 @@
 
 ## Számítások
 
-`node --test tests/model.test.mjs tests/plot.test.mjs` — **23 teszt**, nincs kihagyott teszt. A konkrét esetek:
+`node --test tests/model.test.mjs tests/plot.test.mjs tests/food.test.mjs` — **34 teszt**, nincs kihagyott teszt. A konkrét esetek:
 
 - Induló keret zárt elszámolása, tartalékkal és vételi járulékos költségekkel.
 - Régi JSON telekár nélkül továbbra is betölthető; ár nélkül a vételár ismeretlen, nem nulla.
@@ -52,3 +52,15 @@ Opcionális tesztbeállítások: `GYOKER_PLAYWRIGHT_MODULE` egy telepített Play
 Az adatok agronómiai vagy építőipari helyességét, a forráscikkek aktuális tartalmát, helyi jogi megfelelést, valós közműkapacitást, illetve GitHub Pages publikálást. A feltöltött családi exporttal külön is ellenőriztük a hiánykijelzést és a kézi telekárszámítást; a felhasználó JSON-ját nem tettük a repositoryba.
 
 A Word-dokumentumból származó számok és hivatkozások felhasználói gyűjtésként szerepelnek; a hálózati szabályok miatt az eredeti weboldalakat nem ellenőriztük önállóan. A forrás nélküli együtthatók tervezési próbaértékek.
+
+## Önellátási mód és kompatibilitás
+
+A 11 új számítási teszt a hat kért termékcsoportot, a felfelé kerekítést és többletet, nulla célt, létszámos / kézi fogyasztást, azonos termék közös igényét, rögzített célokat, egyszer számított közös termelést, konzervatív eltérő hozamokat, a közös termelési hiányt, takarmányterület-beszámítást és hibás importokat ellenőrzi.
+
+Külön, helyi összehasonlítás készült a publikált `280ebbd46e8102ff6824a2fd48ab49a70268dcd1` számítási modelljével: **98 egyező eredmény**. A régi mintatervet és a felhasználó privát JSON-ját mindkét pénzügyi móddal, háromszögcsúcsokkal és középponttal, 0 / 50 / 100% takarmánnyal, minimum- és aktuális tervként vetettük össze; két közösségi eset is szerepelt. Minden korábban létező eredménymező egyezett, az új mezőket nem tekintettük eltérésnek. A privát terv és a régi modell ideiglenes összehasonlítási másolata nincs a repositoryban.
+
+Az új export séma 2-es, a régi 1-es import támogatott. A korábbi helyi mentési kulcsokat megőrizzük; az új mentés külön kulcsra kerül. A régi kliens az új exportot verzióhiba miatt visszautasítja, és nem számol belőle kézi mennyiségekkel.
+
+A fogyasztási és hozamszámok agronómiai hitelességét ezek a tesztek nem igazolják.
+
+Az új `tests/food-browser.cjs` az önellátási módváltást, fogyasztás-felülírást, éves hozam módosítását, egész állatot és többletet, nulla célt, szinkronizált százalékcsúszkát, takarmányterület változását, kézi értékek megőrzését, forrás mentését, 2-es JSON-exportot, közös élelmiszer-összegzést, mobilos megjelenést, újratöltést és a régi családi / közösségi helyi mentés megőrzését ellenőrzi. A külön Újdonságok oldal menülinkjét, négy bejegyzését, a publikálási állapotot és mobilos túllógásmentességét is vizsgálja.

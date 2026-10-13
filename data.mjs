@@ -1,5 +1,6 @@
 import {researchSources} from './research.mjs';
-export const DATA_VERSION = '2026-10-v2-vegyes';
+import {defaultFoodProfile} from './food.mjs?v=20261013-4';
+export const DATA_VERSION = '2026-10-v3-onellatasi-profilok';
 export const SOURCES = [
   { title: 'KSH – lakásstatisztika, építési költségek', url: 'https://www.ksh.hu/stadat?theme=lak', status: 'Ellenőrzésre vár. A készítéskor a hálózati hozzáférés blokkolva volt.' },
   { title: 'NAK – mezőgazdasági szakmai tájékoztatók', url: 'https://www.nak.hu/', status: 'További adatkutatáshoz javasolt forrás; a lenti együtthatók nem innen igazolt adatok.' },
@@ -52,9 +53,9 @@ export const SERVICES = {
 
 export function defaultPlan() {
   return {
-    schemaVersion:1, dataVersion:DATA_VERSION,
+    schemaVersion:2, dataVersion:DATA_VERSION,
     family:{ name:'A mi családunk', adults:2, children:1, budget:100000000, availableHours:100, livingMonthly:240000 },
-    landQuote:{unitPrice:0},
+    landQuote:{unitPrice:0}, food:defaultFoodProfile(),
     home:{ min:80, wish:120, locked:false, level:'standard', ownWorkPct:0 },
     reserve:{ min:6, wish:12, locked:false },
     site:{ paths:150, storage:40, parking:45, expansion:200, wastewater:25, fence:1200000, tools:800000, ownedTools:false, outbuildings:3000000, surveys:700000, relocation:500000, otherSetup:0, otherMonthly:0, toolsScope:'family',fenceScope:'shared',outbuildingsScope:'family' },
