@@ -2,7 +2,7 @@
 
 ## Számítások
 
-`node --test tests/model.test.mjs tests/plot.test.mjs tests/food.test.mjs tests/crops.test.mjs` — **40 teszt**, nincs kihagyott teszt. A konkrét esetek:
+`node --test tests/model.test.mjs tests/plot.test.mjs tests/food.test.mjs tests/crops.test.mjs tests/wood.test.mjs` — **51 teszt**, nincs kihagyott teszt. A konkrét esetek:
 
 - Induló keret zárt elszámolása, tartalékkal és vételi járulékos költségekkel.
 - Régi JSON telekár nélkül továbbra is betölthető; ár nélkül a vételár ismeretlen, nem nulla.
@@ -63,7 +63,7 @@ Az új export séma 2-es, a régi 1-es import támogatott. A korábbi helyi ment
 
 A fogyasztási és hozamszámok agronómiai hitelességét ezek a tesztek nem igazolják.
 
-Az új `tests/food-browser.cjs` az önellátási módváltást, fogyasztás-felülírást, éves hozam módosítását, egész állatot és többletet, nulla célt, szinkronizált százalékcsúszkát, takarmányterület változását, kézi értékek megőrzését, forrás mentését, 2-es JSON-exportot, közös élelmiszer-összegzést, mobilos megjelenést, újratöltést és a régi családi / közösségi helyi mentés megőrzését ellenőrzi. A külön Újdonságok oldal menülinkjét, öt bejegyzését, a publikálási állapotot és mobilos túllógásmentességét is vizsgálja.
+Az új `tests/food-browser.cjs` az önellátási módváltást, fogyasztás-felülírást, éves hozam módosítását, egész állatot és többletet, nulla célt, szinkronizált százalékcsúszkát, takarmányterület változását, kézi értékek megőrzését, forrás mentését, 2-es JSON-exportot, közös élelmiszer-összegzést, mobilos megjelenést, újratöltést és a régi családi / közösségi helyi mentés megőrzését ellenőrzi. A külön Újdonságok oldal menülinkjét, hat bejegyzését, a publikálási állapotot és mobilos túllógásmentességét is vizsgálja.
 
 ## Új növények — kompatibilitás a publikált önellátási változattal
 
@@ -72,3 +72,13 @@ Hat új modellteszt ellenőrzi a korábbi élelmiszerprofil bővítését, a saj
 A publikált `96ab1a0492f33c40cca008965e27ff5e17acaade` modellel **146 helyi összehasonlítás** készült: korábbi mintaterv, privát felhasználói export, saját fogyasztást és hozamot használó önellátási terv, két pénzügyi mód, csúcsok és középpont, 0 / 50 / 100% takarmány, minimum- és aktuális terv, valamint két közösségi eset. Minden korábbi eredménymező egyezett a konyhakert szándékosan pontosított megnevezésétől eltekintve. A privát export nem került a repositoryba.
 
 A `tests/crops-browser.cjs` külön bizonyítja a korábbi v2 családi és közösségi helyi mentések változatlan megőrzését, az új v3 munkapéldányba való átállást, mind az öt új választási lehetőséget, az önellátási módot, külön burgonyafogyasztás felülírását, kukorica felhasználási célok szétválasztását, JSON-exportot és újratöltést, közös leltárt, valamint a mobilos oldalt és Újdonságok bejegyzést. A korábbi `tests/browser.cjs` és `tests/food-browser.cjs` teljesen sikeres maradt. Egyik böngészőpróba sem jelzett futási hibát.
+
+## Tűzifa-modul
+
+11 új modellteszt ellenőrzi a fenntartható hozamból számított területet, a forduló egyszeri alkalmazását, száradási és készletigényt, külön tárolóterületet és induló beszerzési keretet, meglévő állományt és készletet, kertautomatizálástól független erdészeti munkát, rögzített célt / kézi területet / nulla célt, kitermelési munkacsúcsot, egyszer elszámolt konzervatív közös hozamot és hiányt, pontos családi/közös térképet, korábbi terv megőrzését, import- és forrásvalidálást, valamint a fűtési keret egyszeri kiegészítését. A fűtési keret hiánypótlása háztartási tétel marad közös terület mellett is.
+
+A publikált `0ee6aa8474254f32dd20173adc9ae0793df3e774` modellhez képest 146 összehasonlításban minden korábbi eredménymező azonos maradt, a korábbi növényprofilt és a privát családi exportot is beleértve. Az új modul nélkül a tűzifa-összegzés üres, a tervben új tevékenység nem jelenik meg.
+
+A `tests/wood-browser.cjs` bizonyítja a v3 családi és közösségi helyi mentés változatlan megőrzését, a v4 munkapéldányt, a tűzifa cél- és hozamszámítását, a forduló változtatásakor állandó területet, meglévő állomány és tárolás jelölését, forrásszerkesztést, 3-as családi / közös JSON-exportot és közös visszatöltést, a túl kicsi közös terület hiányjelzését, valamint a mobilos felületet és Újdonságok oldalt. A három korábbi böngészőpróba is sikeres. A helyi tesztkiszolgálót üres HTTP-válasz után újraindítottuk fájlba irányított naplóval; a funkcionális próbák ezután sikeresek.
+
+A próbák nem igazolják az erdészeti és fűtéstechnikai együtthatók szakmai helyességét. Ezek mindenhol módosítható, forrás nélküli próbaértékként szerepelnek.

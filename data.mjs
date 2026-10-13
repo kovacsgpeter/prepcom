@@ -1,7 +1,9 @@
 import {researchSources} from './research.mjs';
-import {defaultFoodProfile} from './food.mjs?v=20261013-5';
-export const DATA_VERSION = '2026-10-v4-uj-novenyek';
+import {defaultFoodProfile} from './food.mjs?v=20261013-6';
+import {defaultWoodProfile} from './wood.mjs?v=20261013-6';
+export const DATA_VERSION = '2026-10-v5-tuzifa';
 export const NEW_CROP_IDS = ['potato','sweetcorn','maize','feedmaize','apricot'];
+export const NEW_ACTIVITY_IDS = [...NEW_CROP_IDS,'firewood'];
 export const SOURCES = [
   { title: 'KSH – lakásstatisztika, építési költségek', url: 'https://www.ksh.hu/stadat?theme=lak', status: 'Ellenőrzésre vár. A készítéskor a hálózati hozzáférés blokkolva volt.' },
   { title: 'NAK – mezőgazdasági szakmai tájékoztatók', url: 'https://www.nak.hu/', status: 'További adatkutatáshoz javasolt forrás; a lenti együtthatók nem innen igazolt adatok.' },
@@ -38,6 +40,7 @@ export const CATALOGUE = [
   { id:'cowmilk', category:'Állatok', name:'Tejelő szarvasmarha', icon:'🐄', unit:'állat', area:120, setup:1800000, monthly:15000, water:2100, hours:22, peak:1.3, waterPeak:1.6, feed:14, feedKind:'forage', feedPrice:100, step:1 },
   { id:'cowmeat', category:'Állatok', name:'Húscélú szarvasmarha', icon:'🐂', unit:'állat', area:120, setup:1400000, monthly:10000, water:1500, hours:8, peak:1.5, waterPeak:68*365/12/1500, feed:11.8, feedKind:'forage', feedPrice:100, step:1 },
   { id:'bees', category:'Állatok', name:'Méhészet', icon:'🐝', unit:'méhcsalád', area:8, setup:100000, monthly:2000, water:5, hours:2, peak:3, waterPeak:2, step:1 },
+  { id:'firewood', category:'Faanyag', name:'Tűzifa-termő terület', note:'Hosszú távú, fenntartható tűzifaellátás. A mennyiség a termőterület m²-ben; külön hozzászámoljuk a fatárolót és az induló száraz készlet beszerzését. A fanövedék nem minden évben kivágható tűzifa. Minden adat szerkeszthető próbaérték; a helyi fafaj, termőhely és gazdálkodási lehetőség külön ellenőrizendő.', icon:'🪵', unit:'m²', area:1, setup:150, monthly:.4, water:0, hours:.00005, peak:4, waterPeak:1, step:100 },
 ];
 
 export const DEFAULT_ASSUMPTIONS = {
@@ -61,7 +64,7 @@ export function defaultPlan() {
   return {
     schemaVersion:2, dataVersion:DATA_VERSION,
     family:{ name:'A mi családunk', adults:2, children:1, budget:100000000, availableHours:100, livingMonthly:240000 },
-    landQuote:{unitPrice:0}, food:defaultFoodProfile(),
+    landQuote:{unitPrice:0}, food:defaultFoodProfile(), wood:defaultWoodProfile(),
     home:{ min:80, wish:120, locked:false, level:'standard', ownWorkPct:0 },
     reserve:{ min:6, wish:12, locked:false },
     site:{ paths:150, storage:40, parking:45, expansion:200, wastewater:25, fence:1200000, tools:800000, ownedTools:false, outbuildings:3000000, surveys:700000, relocation:500000, otherSetup:0, otherMonthly:0, toolsScope:'family',fenceScope:'shared',outbuildingsScope:'family' },

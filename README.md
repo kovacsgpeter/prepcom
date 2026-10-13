@@ -54,7 +54,7 @@ További adatkutatás: konyhakerti és gyümölcsös munka/víz; állatonkénti 
 ## Ellenőrzés
 
 ```sh
-node --test tests/model.test.mjs tests/plot.test.mjs tests/food.test.mjs tests/crops.test.mjs
+node --test tests/model.test.mjs tests/plot.test.mjs tests/food.test.mjs tests/crops.test.mjs tests/wood.test.mjs
 ```
 
 A tesztek a pénzügyi korlátokat, zárt költségelszámolást, darabszámokat, takarmány beszámítását, közös tételeket, munkadíj-egyenleget, importvalidálást és a geometriai vezérlőt ellenőrzik. A felület asztali és mobil Chromium böngészőben is ellenőrzött; a részletek a `VALIDATION.md` fájlban.
@@ -73,7 +73,7 @@ A `food.mjs` fogyasztási és hozamértékei **forrás nélküli tervezési pró
 
 A takarmányarány külön bemenet: a tényleges saját arányból kiszámolt éves igényből előbb levonjuk a megadott takarmányföld termését, majd a hiány / hozam adja a további földet. A felület a tartási helyet, a már felvett takarmányföldet és a további földet külön megmutatja, valamint jelzi a háromszög által módosított tényleges arányt.
 
-A régi, 1-es JSON betölthető, kézi módban marad, és a korábbi számítási eredményei megmaradnak. Az új export 2-es verziójú; az 1-es formátumot támogató régi kliens ezt elutasítja, így nem értelmezi félre az önellátási célt. A jelenlegi böngészős mentés `gyoker-family-v3` / `gyoker-group-v3` kulcsokra kerül; a korábbi v2 és v1 mentést csak olvassuk az átálláshoz, és nem írjuk felül. A külön térképelőnézet mindhárom mentési verzióból tud olvasni.
+A régi, 1-es JSON betölthető, kézi módban marad, és a korábbi számítási eredményei megmaradnak. Az új export 2-es verziójú; az 1-es formátumot támogató régi kliens ezt elutasítja, így nem értelmezi félre az önellátási célt. A jelenlegi böngészős mentés `gyoker-family-v4` / `gyoker-group-v4` kulcsokra kerül; a korábbi v3, v2 és v1 mentést csak olvassuk az átálláshoz, és nem írjuk felül. A külön térképelőnézet mind a négy mentési verzióból tud olvasni.
 
 Az új önellátási és mentésátállási böngészőpróba: `node tests/food-browser.cjs`, ugyanazokkal a Playwright-beállításokkal, mint a meglévő felületteszt.
 
@@ -85,10 +85,24 @@ A `release-notes.html` a kalkulátor felső menüjéből érhető el. Minden bej
 
 A burgonya, csemegekukorica, étkezési szemes kukorica, takarmánykukorica és kajszibarackfa külön tevékenység. A burgonya és a friss, morzsolt csemegekukorica saját éves fogyasztási profilt kap; az étkezési szemes kukorica a gabonaigényből, a kajszi a közös gyümölcsigényből részesedik. A takarmánykukorica szárított szemtermése kizárólag a gabonatakarmány igényébe kerül, étkezési termelésként nem számítjuk be újra. Nem silókukorica.
 
-A konyhakert neve „Konyhakert / háztáji zöldséges”, és paradicsomos-paprikás vegyes kertet jelent. A külön felvett burgonya- és kukoricaágyásokat a vegyes kert területéből ki kell hagyni; a saját vegyes zöldségfogyasztásból is ki kell venni e külön termékeket. A meglévő kertmennyiséget nem bontjuk fel automatikusan. Fajonkénti zöldségcél, gyógynövényes kert és tűzifa-terület későbbi bővítés.
+A konyhakert neve „Konyhakert / háztáji zöldséges”, és paradicsomos-paprikás vegyes kertet jelent. A külön felvett burgonya- és kukoricaágyásokat a vegyes kert területéből ki kell hagyni; a saját vegyes zöldségfogyasztásból is ki kell venni e külön termékeket. A meglévő kertmennyiséget nem bontjuk fel automatikusan. Fajonkénti zöldségcél és gyógynövényes kert későbbi bővítés; a tűzifa-terület külön modulban elkészült.
 
 Minden új terület-, költség-, víz-, munka-, hozam- és fogyasztási együttható módosítható, forrás nélküli próbaérték. Ezek szakmai helyességét a tesztek nem igazolják. A kajszi hozama termő korú fára vonatkozik.
 
 Korábbi JSON betöltésekor kizárólag a hiányzó új katalóguselemeket és profilokat adjuk hozzá, és a konyhakert alapmegnevezését pontosítjuk. Egyetlen új tevékenység sem kerül automatikusan a tervbe. A korábbi saját számokat és forrásokat megtartjuk; a módosított, ismét exportált terv visszatölthető. Az élelmiszerprofil `profileVersion: 2`; az előző, verziójelölés nélküli profilból csak az új termékek hiányzó adatait pótoljuk, hibás régi értékeket nem javítunk hallgatólagosan.
 
 Az új böngészős ellenőrzés `node tests/crops-browser.cjs`: régi v2 mentések átállása, új választási lehetőségek, önellátási célok, takarmány és étkezési kukorica szétválasztása, mentés-visszatöltés, közös leltár és mobilos megjelenítés.
+
+## Tűzifa-termelés
+
+A Faanyag kategória Tűzifa-termő terület tevékenysége m²-ben kézi mennyiséget vagy az éves faigény saját fedezeti százalékát fogadja. A `wood.mjs` külön modell: tömör m³ anyagtérfogattal számol, nem rakott vagy ömlesztett m³-rel, és nem keveri a fát az élelmiszer-önellátásba. A termőterület = éves saját cél / (éves fanövedék × hasznosítható hányad). A vágásforduló nem egy újabb területszorzó, hanem az éves korosztályos vágási terület és az egyszeri, fordulónkénti termés meghatározója.
+
+Új telepítésnél az első kitermelési várakozást és a szárítást összeadjuk. Meglévő állománynál már korosztályokra osztott, kitermelhető területet feltételezünk; a friss termés szárítási ideje ott is számít. Az éves átlag nem garantálja a mai ellátást vagy egykorú állomány mindenéves kitermelését. A kezdeti 6 tömör m³/év igény, 4 tömör m³/ha/év növedék, 85% hasznosítható hányad és 20 éves forduló egyaránt **forrás nélküli próbaérték**, nem erdészeti ajánlás. Minden együttható külön szerkeszthető és forrásolható a családi kártyán és az Alapadatok fülön. A fafaj, termőhely és gazdálkodási lehetőség helyi ellenőrzést igényel.
+
+A száradó és száraz készlet = saját éves termelés × (szárítási évek + tartalékévek). Rakott térfogati szorzóból és rakási magasságból külön fatárolóterületet adunk hozzá, külön kialakítási kerettel. Meglévő alap tároló és induló száraz készlet külön jelölhető. Az új telepítés és a száraz készlet beszerzése induló költség; a kitermelés és feldolgozás anyag/gép költsége és saját órája éves átlagként havi igény. Az új, egykorú állomány nagy kitermelése a munkacsúcsban is szerepel. Kertöntözés és általános gépesítés nem csökkenti a faanyag munkáját és nem ad öntözési beruházást a fás területhez.
+
+A várakozás alatti további vásárlás többéves összegét tájékoztatóan mutatjuk. A havi fűtési keretben az éves vásárlási szükségletet figyelembe vesszük: a meglévő kereten felüli különbözetet adjuk hozzá, és automatikusan nem csökkentjük a keretet. Ez háztartási pénzigény, a közös terület összevonása nem vonja össze a családok fűtési keretét.
+
+A közös terület termelése és tárolása egyszer szerepel. Eltérő hozamoknál a kisebb, költség/munka/tárolás esetén a magasabb fajlagos igény érvényesül. Az elfogadott túl kicsi területnél a saját cél hiányát jelezzük. A térképen fás termőterület és külön fatároló látszik.
+
+Régi tervben a tűzifa-profil és választási lehetőség hozzáadódik, tevékenységet nem aktiválunk. Tűzifát tartalmazó családi vagy közös export **3-as séma**, a korábbi 1-es és 2-es import támogatott; a korábbi kliens a 3-as fájlt elutasítja. Tűzifa nélkül az export 2-es marad. A v4 helyi munkapéldány a v3 mentést is megőrzi. Az új böngészőpróba: `node tests/wood-browser.cjs`, az eddigi Playwright-beállításokkal.
