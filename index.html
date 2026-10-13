@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="hu">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#254f3c">
+  <meta name="description" content="Családi és közösségi birtoktervező: földigény, házépítés, gazdasági költségek, víz és munka egy átlátható tervben.">
+  <title>Gyökér · Egy új élet terve</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="#" class="brand" aria-label="Gyökér kezdőlap"><svg viewBox="0 0 36 36" aria-hidden="true"><path d="M18 30V15M18 22L10 27M18 25L25 30M18 18C6 18 5 7 5 7s13-1 13 11Zm0-4C18 4 31 4 31 4s1 13-13 14"/></svg><span>gyökér<span class="brand-dot">.</span></span></a>
+    <nav aria-label="Fő navigáció"><button class="nav-button active" data-tab="family">Családi terv</button><button class="nav-button" data-tab="reveal">Reveal party <span id="family-count" class="count">0</span></button><button class="nav-button" data-tab="method">Alapadatok</button></nav>
+    <span class="header-note">EGY ÚJ ÉLET TERVE</span>
+  </header>
+  <main>
+    <section id="tab-family" class="tab-panel">
+      <div class="hero">
+        <div><div class="eyebrow"><span class="little-leaf">✦</span> KISEBB LÉPTÉK. NAGYOBB TUDATOSSÁG.</div><h1>Mennyi föld kell<br>az <em>új életetekhez?</em></h1><p>Rakjátok össze a saját vidéki terveteket. Nézzétek meg, mennyi helyet, pénzt és munkát kér — mielőtt telket kerestek.</p><div class="hero-tags"><span>🌿 Saját igények</span><span>🏡 Közös jövő</span><span>↗ Látható kompromisszumok</span></div></div>
+        <div class="hero-art" aria-hidden="true"><svg viewBox="0 0 440 280"><defs><pattern id="rows" width="16" height="16" patternUnits="userSpaceOnUse" patternTransform="rotate(-28)"><path d="M0 0V16" stroke="#b5c095" stroke-width="5"/></pattern></defs><ellipse cx="228" cy="250" rx="175" ry="17" fill="#dcdcc7"/><path d="M35 168 222 65 410 161 219 264Z" fill="#b0bd91"/><path d="M35 168 219 264 219 278 35 182Z" fill="#95a57a"/><path d="M219 264 410 161 410 175 219 278Z" fill="#80956e"/><path d="M54 165 163 106 221 136 113 196Z" fill="url(#rows)"/><path d="M192 102 228 83 327 133 290 153Z" fill="#d1c4a1"/><path d="M236 100 285 125 285 88 236 63Z" fill="#f1e7ce"/><path d="M285 125 321 106 321 69 285 88Z" fill="#dbc5a2"/><path d="M231 64 267 30 326 66 285 92Z" fill="#b77353"/><path d="M231 64 267 30 267 57 236 77Z" fill="#c88862"/><path d="M253 82 269 91 269 112 253 104Z" fill="#776e58"/><path d="M298 88 309 82 309 94 298 100Z" fill="#819894"/><path d="M195 138 233 159 295 192 271 205 170 151Z" fill="#eee0bc"/><path d="M144 187 231 230 269 210 184 168Z" fill="#cfad77"/><path d="M158 187 238 226M170 180 251 220M184 174 265 214" stroke="#7d8c53" stroke-width="7"/><g fill="#53794e"><circle cx="339" cy="137" r="19"/><circle cx="367" cy="162" r="17"/><circle cx="314" cy="164" r="18"/><circle cx="96" cy="126" r="19"/></g><g stroke="#6c7250" stroke-width="5"><path d="M339 145V169M367 170V191M314 173V197M96 136V160"/></g><g fill="#668952"><circle cx="339" cy="123" r="18"/><circle cx="367" cy="151" r="15"/><circle cx="314" cy="152" r="17"/><circle cx="96" cy="113" r="16"/></g><path d="M82 175V157M106 187V169M130 200V182M82 162 130 188M82 171 130 197" stroke="#f7edcf" stroke-width="4"/></svg><span class="art-caption">A vágyból átlátható terv.</span></div>
+      </div>
+      <div class="notice"><span>i</span><p><strong>Tervezési prototípus.</strong> Az egységadatok egyelőre módosítható, nem forrásolt becslések. Az eredmény nem igazolja egy konkrét telek beépíthetőségét, vízellátását vagy termőképességét.</p><button data-tab="method" class="text-button">Alapadatok ↗</button></div>
+      <div class="workspace-heading"><div><div class="eyebrow">01 / A TI TERVETEK</div><h2>Mi férjen el az új életben?</h2></div><div class="actions"><span id="autosave-status" class="muted small"></span><button id="load-family" class="button secondary">Terv betöltése</button><button id="save-family" class="button primary">↓ Családi JSON</button></div></div>
+      <div class="planner-layout">
+        <div id="family-inputs" class="input-column"></div>
+        <aside id="family-results" class="result-column" aria-label="A terv számított eredménye"></aside>
+      </div>
+      <section class="panel triangle-section"><div class="section-title"><span class="step-number">05</span><div><h3>Találjátok meg az egyensúlyt</h3><p>Húzd a pontot, vagy használd a csúcsok alatti csúszkákat. A rögzített minimumokat megőrizzük.</p></div></div><div id="family-triangles" class="triangles-grid"></div><div id="triangle-explanation" class="triangle-explanation"></div></section>
+    </section>
+    <section id="tab-reveal" class="tab-panel" hidden>
+      <div class="page-intro"><div class="eyebrow">02 / KÖZÖS BIRTOK, KÜLÖN CSALÁDOK</div><h1>Hozzátok össze<br><em>a terveiteket.</em></h1><p>A színes pontok megmutatják az eltérő prioritásokat. Az összesítés pedig azt, milyen feltételekkel lehet belőlük közös terv.</p></div>
+      <div class="import-zone"><div><h3>Kezdődjön a reveal party</h3><p>Töltsétek be a családi JSON-okat. A fájlok ebben a böngészőben maradnak.</p></div><div class="actions"><button id="add-current" class="button secondary">+ Jelenlegi családi terv</button><label class="button primary" for="group-files">↑ Családi JSON-ok betöltése</label><input id="group-files" type="file" accept=".json,application/json" multiple class="visually-hidden"></div></div>
+      <div id="group-content"></div>
+    </section>
+    <section id="tab-method" class="tab-panel" hidden>
+      <div class="page-intro"><div class="eyebrow">03 / A SZÁMOK MÖGÖTT</div><h1>Lássatok rá<br><em>a feltételezésekre.</em></h1><p>A jó döntéshez nem elég egy szám. Tudni kell, miből jött ki, és mennyire biztos.</p></div>
+      <div id="method-content"></div>
+    </section>
+  </main>
+  <footer><a class="brand footer-brand" href="#">gyökér.</a><span>Tervezzetek együtt. Döntsetek tudatosan.</span><span>Helyben számol · Nincs adatfeltöltés</span></footer>
+  <input id="family-file" type="file" accept=".json,application/json" hidden>
+  <div id="toast" role="status" aria-live="polite" hidden></div>
+  <script type="module" src="app.mjs"></script>
+</body>
+</html>
