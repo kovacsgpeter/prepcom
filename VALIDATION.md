@@ -2,7 +2,7 @@
 
 ## Számítások
 
-`node --test tests/model.test.mjs` — **18 teszt**, nincs kihagyott teszt. A konkrét esetek:
+`node --test tests/model.test.mjs tests/plot.test.mjs` — **23 teszt**, nincs kihagyott teszt. A konkrét esetek:
 
 - Induló keret zárt elszámolása, tartalékkal és vételi járulékos költségekkel.
 - Régi JSON telekár nélkül továbbra is betölthető; ár nélkül a vételár ismeretlen, nem nulla.
@@ -23,9 +23,11 @@
 - Hibás közös arányok, mennyiségek és túlzott óravállalások elutasítása.
 - Háromszögpontok vetítése és geometriai visszaalakítás.
 
+A térkép további öt tesztje: családi területek egyszeri teljes lefedése; összevont közös tároló és takarmányterület helyes területösszege; arányos, nem átfedő téglalapok és változatlan tételazonosítók; biztonságosan escape-elt címkék és üres terület kezelése; egycsaládos reveal a saját közös pillanatképre hivatkozik.
+
 ## Böngésző
 
-`tests/browser.cjs` — **7 sikeres munkafolyamat**, Chromium, asztali 1440 px és mobil 390 px szélesség:
+`tests/browser.cjs` — **8 sikeres munkafolyamat**, Chromium, asztali 1440 px és mobil 390 px szélesség:
 
 1. Keret csúszka és számmező szinkronja, egérrel mozgatott háromszög, pénzügyi nézetváltás.
 2. Családi JSON letöltés és visszatöltés, a források megőrzésével.
@@ -34,6 +36,8 @@
 5. Kilenc kutatási adattábla közvetlen hivatkozásokkal; forrás szerkesztése és exportja; hibás családi import elutasítása a jelenlegi terv megtartásával.
 6. Régi, telekár nélküli és fedezethiányos JSON; 0-ra korlátozott vételárkeret, külön hiány; kézi telekár és törlése; koppintható és Esc-kel bezárható súgók; csúcsleírás megnyitása a terv módosítása nélkül; külön Útmutató fül.
 7. Mind a négy nézet mobilon az oldal vízszintes túllógása nélkül; helyi mentés visszaállítása újratöltés után; nincs böngészős futásidejű hiba.
+
+8. Családi / háromcsaládos előnézet, ház-, üvegház- és gyümölcsfa-rajzok; közös blokk; kattintható és billentyűzettel kiválasztható zónák; a jelenlegi közös terv megnyitása; saját JSON-import a helyi családi mentés felülírása nélkül; mobilos előnézet túllógás nélkül.
 
 Futtatás: indítsd az útmutató szerinti HTTP-kiszolgálót, majd Playwrightot tartalmazó Node-környezetből:
 

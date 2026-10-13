@@ -33,7 +33,7 @@ Legfeljebb 24 család és 2 MB-os JSON-fájlok kezelhetők. Azonos tartalmú csa
 - A tervezés, szakértők, költözés, melléképületek, közművek, eszközök, egyéb kiadások és tartalék külön megadhatók. A telek vételárkerete a százalékos és fix vásárlási költségkerettel is számol. Az illetékjogosultság, mentesség és a mezőgazdasági föld vásárlásának szabályai nincsenek modellezve.
 - A közös tétel az érintett családi tételeket váltja ki. Az eltérő fajlagos becslések maximumával számol; ez konzervatív keret, nem műszaki méretezés. A közös közműrendszer kapacitását külön ellenőrizni kell, a változó fogyasztási költséget a havi díjakban kell aktualizálni.
 - A belső munkadíj egyenlege nulla. Csak a vállalt közös munka oszlik el: a fedezetlen órák láthatók, és csak külön választással kerülnek külső segítségként a költségbe. A szezonális csúcsok összeadott becslések, nem havi naptár; a csúcsidőszaki munkamegosztás külön feladat.
-- A hipotetikus telek területarányos sávdiagram. Nem valós telekrajz, tulajdonjogi javaslat vagy beépítési terv.
+- A családi és közös telekábra felülnézeti, területarányos térkép: ház és udvar, üvegház, gyümölcsfák, bokrok, ágyások, állatok, külön takarmányterület és infrastruktúra. A rajzok jelképesek; a valós mennyiségeket a feliratok adják. A családok színes határvonallal és névvel, a közös területek külön blokkal szerepelnek. Nem valós telekrajz, tulajdonjogi javaslat vagy beépítési terv.
 
 ## Adatok és források
 
@@ -43,6 +43,8 @@ Az **Alapadatok** nézetben minden együttható látható és módosítható, fo
 - `research.mjs`: a felhasznált gyűjtési adatokhoz rendelt közvetlen forráslinkek és átváltások.
 - `research-document.mjs`: az `Epitesi_arak_es_allattartas.docx` kilenc adattáblája és 51 egyedi hivatkozása. Az oldalon az eredeti adatok akkor is megjelennek, ha nem kerültek be a számításba.
 - `model.mjs`: számítás, közös egyeztetés, JSON-validálás és háromszög-geometria.
+- `plot.mjs`, `plot.css`: közös térképrenderelő, területarányos elrendezés és rajzos SVG-elemek.
+- `plot-preview.html`, `plot-preview.mjs`: külön előnézet családi és háromcsaládos mintával, helyi mentett tervek megnyitásával és saját családi JSON betöltésével. A JSON-import nem módosítja a kalkulátor helyi mentését.
 - `app.mjs`, `index.html`, `style.css`: böngészős felület, helyi mentés és import/export.
 
 A kutatási források eredeti oldalait a környezet hálózati korlátozása miatt nem lehetett önállóan ellenőrizni. Nem tekintjük garantált mai építési árnak a nettó vagy régi árakat; nincs automatikus 5%-os áfaalkalmazás. A külföldi állattartási irányértékek nem magyar szabályozási minimumok. A juh üzemi munkaadata és az észak-dakotai legelő hektár/hó adata nem került automatikusan a háztáji modellbe.
@@ -52,7 +54,13 @@ További adatkutatás: konyhakerti és gyümölcsös munka/víz; állatonkénti 
 ## Ellenőrzés
 
 ```sh
-node --test tests/model.test.mjs
+node --test tests/model.test.mjs tests/plot.test.mjs
 ```
 
 A tesztek a pénzügyi korlátokat, zárt költségelszámolást, darabszámokat, takarmány beszámítását, közös tételeket, munkadíj-egyenleget, importvalidálást és a geometriai vezérlőt ellenőrzik. A felület asztali és mobil Chromium böngészőben is ellenőrzött; a részletek a `VALIDATION.md` fájlban.
+
+## A birtoktérkép előnézete
+
+Nyisd meg a `plot-preview.html` oldalt ugyanazon a HTTP-kiszolgálón vagy a GitHub Pagesen. A külön előnézet családi és háromcsaládos fiktív mintát, valamint a böngészőben mentett saját családi / közös tervet mutatja. Saját családi JSON is betölthető feltöltés és a helyi mentés felülírása nélkül. A térkép számozott zónái és a jelmagyarázat kattintással, koppintással vagy billentyűzettel kiválaszthatók.
+
+A zónák téglalap-elrendezése megőrzi a számított területarányokat; a kis rajzok nem méretarányos épület- vagy állatrajzok. Közös térképnél az egyeztetett takarmánytermést és tárolóterületet egyszer számoljuk. A nulla területű közös eszközök a térkép alatti szövegben szerepelnek. A teljesen izometrikus, térhatású birtoknézet későbbi fejlesztés; a jelenlegi nézet felülnézeti.

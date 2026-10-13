@@ -1,4 +1,4 @@
-import { CATALOGUE, DEFAULT_ASSUMPTIONS, SERVICES } from './data.mjs?v=20261013-2';
+import { CATALOGUE, DEFAULT_ASSUMPTIONS, SERVICES } from './data.mjs?v=20261013-3';
 
 export const clamp = (v,lo=0,hi=1) => Math.min(hi,Math.max(lo,v));
 const sum = (xs, fn=x=>x) => xs.reduce((s,x)=>s+fn(x),0);
@@ -19,7 +19,7 @@ export function calculate(plan,{minimum=false}={}) {
     const crop=c.category!=='Állatok';
     const efficiency=crop?Math.max(.05,1-a.irrigationLabourSaving/100*autoLevel-a.machineryLabourSaving/100*machineLevel):1;
     const waterEfficiency=crop?1-a.irrigationWaterSaving/100*autoLevel:1;
-    const row={ id:item.id,name:c.name,icon:c.icon,unit:c.unit,scope:item.scope,minQty:item.locked?item.wish:item.min,qty,
+    const row={ id:item.id,name:c.name,category:c.category,icon:c.icon,unit:c.unit,scope:item.scope,minQty:item.locked?item.wish:item.min,qty,
       area:qty*c.area,setup:item.owned?0:qty*c.setup,monthly:qty*c.monthly,water:qty*c.water*waterEfficiency,
       hours:qty*c.hours*efficiency,peakHours:qty*c.hours*c.peak*efficiency,peakWater:qty*c.water*c.waterPeak*waterEfficiency,
       feedKg:qty*(c.feed||0)*365,ownFeedKg:qty*(c.feed||0)*365*feedShare,feedProduced:qty*(c.feedYield||0),feedKind:c.feedKind,autoArea:0,autoSetup:0,autoMonthly:0,autoHours:0,autoPeakHours:0,
@@ -221,7 +221,7 @@ export function aggregate(plans,{decisions={},landShares=[],workHours=[],hourlyR
     const qty=d.quantity??Math.max(...participating.map(x=>x.row.qty));
     if(!Number.isFinite(qty)||!Number.isFinite(minimum)||qty<minimum||minimum<0)throw new Error('A közös mennyiség nem lehet kisebb a közös minimumnál.');
     if(participating[0].row.unit!=='m²'&&(!Number.isInteger(qty)||!Number.isInteger(minimum)))throw new Error('A közös darabszám egész szám legyen.');
-    const row={id,name:participating[0].row.name,icon:participating[0].row.icon,unit:participating[0].row.unit,qty,minQty:minimum,scope:'shared',minimumArea:0};
+    const row={id,name:participating[0].row.name,category:participating[0].row.category,icon:participating[0].row.icon,unit:participating[0].row.unit,qty,minQty:minimum,scope:'shared',minimumArea:0};
     for(const metric of sharedMetrics)row[metric]=metric==='autoArea'?0:qty*Math.max(...participating.map(x=>(x.row[metric]-(x.row[autoMetrics[metric]]||0))/x.row.qty));
     row.ownFeedKg=qty*Math.max(...participating.map(x=>(x.row.ownFeedKg||0)/x.row.qty));
     row.feedProduced=qty*Math.min(...participating.map(x=>(x.row.feedProduced||0)/x.row.qty));
@@ -277,7 +277,8 @@ export function aggregate(plans,{decisions={},landShares=[],workHours=[],hourlyR
   const familyOnly=results.flatMap((r,i)=>r.rows.filter(x=>!merged.some(y=>y.id===x.id)).map(x=>({...x,familyIndex:i})));
   const quantities=new Map();
   for(const item of [...familyOnly,...merged]) {const prev=quantities.get(item.id)||{id:item.id,name:item.name,unit:item.unit,icon:item.icon,qty:0};prev.qty+=item.qty;quantities.set(item.id,prev);}
-  return {rows,results,mins,conflicts,merged,unresolved,sharedHours,sharedShortage,ownShortages,landBudgetLimit,pool,landArea,minimumArea,maximumArea,monthly,quantities:[...quantities.values()],totalPledge:sum(rows,x=>x.pledge||0),allPledged:rows.every(x=>x.pledge!==null),
+  const plotFamilies=plans.map((p,i)=>({name:p.family.name,homeArea:results[i].homeArea,homeLand:results[i].homeLand,site:{...p.site,storage:merged.some(x=>x.id==='site-outbuildings')?0:p.site.storage},items:retained[i],totalArea:rows[i].landArea-sharedArea/n}));
+  return {rows,results,mins,conflicts,merged,unresolved,sharedHours,sharedShortage,ownShortages,landBudgetLimit,pool,landArea,minimumArea,maximumArea,monthly,quantities:[...quantities.values()],totalPledge:sum(rows,x=>x.pledge||0),allPledged:rows.every(x=>x.pledge!==null),plotFamilies,
     hours:sum(rows,x=>x.requiredHours)+sharedShortage,peakHours:sum(rows,x=>x.peakHours),water:sum(rows,x=>x.water),
     feasible:!unresolved&&rows.every(x=>x.landBudget>=0)&&(externalHelp||(!sharedShortage&&ownShortages.every(x=>x===0)))&&(maximumArea===null||maximumArea>=landArea)};
 }

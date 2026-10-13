@@ -33,7 +33,7 @@ const baseUrl=process.env.GYOKER_BASE_URL||'http://127.0.0.1:8000';
  const max=Number(await page.locator('[data-group-work="1"]').getAttribute('max'));await page.locator('[data-group-work="0"]').fill('0');await page.locator('[data-group-work="1"]').fill(String(max));await page.locator('#apply-work').click();
  await page.locator('[data-group-config="landPrice"]').fill('10000');await page.locator('[data-group-config="landPrice"]').blur();assert.ok((await page.locator('#group-content').innerText()).includes('Ezen az egységáron legfeljebb'));
  await page.locator('#group-content .triangle-dot').first().click();assert.ok((await page.locator('#group-content').innerText()).includes('Alma család:'));
- assert.equal(await page.locator('.plot-svg').count(),1);
+ assert.equal(await page.locator('#group-content .plot-svg').count(),1);
  console.log('PASS: two-family reveal, deduplication, colored dots, reconciliation, shares, pledges, labor and plot');
  downloadPromise=page.waitForEvent('download');await page.locator('#save-group').click();dl=await downloadPromise;await dl.saveAs(path.join(outputDir,'gyoker-community.json'));
  const savedGroup=JSON.parse(fs.readFileSync(path.join(outputDir,'gyoker-community.json')));assert.equal(savedGroup.families.length,2);assert.equal(savedGroup.config.landShares[0],.6);assert.equal(savedGroup.config.decisions.hen.strategy,'shared');
@@ -64,7 +64,15 @@ const baseUrl=process.env.GYOKER_BASE_URL||'http://127.0.0.1:8000';
  for(const tab of ['Családi terv','Reveal party','Alapadatok','Útmutató']){await page.getByRole('button',{name:tab,exact:tab!=='Reveal party'}).click();assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth),390,tab+' should not overflow');}
  await page.getByRole('button',{name:'Reveal party'}).click();await page.screenshot({path:path.join(outputDir,'gyoker-final-mobile.png'),fullPage:true});
  await page.reload();assert.equal(await page.locator('[data-path="family.name"]').inputValue(),'Körte család');await page.getByRole('button',{name:'Reveal party'}).click();assert.equal(await page.locator('.family-chip').count(),2);
- assert.deepEqual(errors,[]);
+
+ await page.setViewportSize({width:1400,height:1100});await page.goto(baseUrl+'/plot-preview.html');await page.locator('.estate-map').waitFor();assert.equal(await page.locator('.estate-owner-frame').count(),1);assert.ok(await page.locator('use[href$="-house"]').count()>0);assert.ok(await page.locator('use[href$="-greenhouse"]').count()>0);assert.ok(await page.locator('use[href$="-tree"]').count()>0);
+ await page.locator('.estate-legend-item').first().click();assert.ok((await page.locator('.estate-readout').innerText()).includes('Otthon és udvar'));await page.locator('.estate-zone').first().focus();await page.keyboard.press('Enter');assert.ok((await page.locator('.estate-readout').innerText()).includes('m²'));
+ await page.locator('[data-preview="community"]').click();assert.equal(await page.locator('.estate-owner-frame').count(),4);assert.ok((await page.locator('.estate-owners').innerText()).includes('Közös használat'));await page.locator('.estate-svg-wrap').screenshot({path:path.join(outputDir,'gyoker-community-map.png')});
+ await page.goto(baseUrl+'/plot-preview.html?view=current-community');assert.ok((await page.locator('#preview-title').innerText()).includes('jelenlegi saját közös terv'));assert.equal(await page.locator('.estate-owner-frame').count(),3);
+ const storedBefore=await page.evaluate(()=>localStorage.getItem('gyoker-family-v1'));await page.locator('#preview-file').setInputFiles(path.join(outputDir,'gyoker-family.json'));await page.waitForFunction(()=>document.querySelector('#preview-title').innerText.includes('Alma család'));assert.equal(await page.evaluate(()=>localStorage.getItem('gyoker-family-v1')),storedBefore);
+ await page.setViewportSize({width:390,height:844});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth),390);await page.locator('.estate-legend-item').first().click();assert.ok((await page.locator('.estate-readout').innerText()).includes('m²'));
+ console.log('PASS: illustrated family and shared preview, symbols, tap and keyboard selection, current plan links, private JSON import and mobile layout');
+assert.deepEqual(errors,[]);
  console.log('PASS: mobile layout, reload persistence; no browser runtime errors');
  await browser.close();
  console.log('Artifacts:',outputDir);
