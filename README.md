@@ -11,16 +11,18 @@ python3 -m http.server 8000 --bind 127.0.0.1
 
 ES-modulokat használ, ezért HTTP-kiszolgálóról kell megnyitni, nem az `index.html` dupla kattintásával.
 
-GitHub Pages: a repository **Settings → Pages** beállításában válaszd a közzétenni kívánt ágat és a **/ (root)** könyvtárat. Az `index.html`, `.mjs` és CSS fájlokat együtt kell közzétenni. A `.nojekyll` jelzi, hogy nincs Jekyll-generálás. Ez a munkamenet nem publikálta az oldalt, és nem módosított GitHub-beállításokat.
+GitHub Pages: a repository **Settings → Pages** beállításában válaszd a közzétenni kívánt ágat és a **/ (root)** könyvtárat. Az `index.html`, `.mjs` és CSS fájlokat együtt kell közzétenni. A `.nojekyll` jelzi, hogy nincs Jekyll-generálás. Az oldal a main ágon van; az ágfrissítéseket a beállított GitHub Pages automatikusan publikálja. A publikálás állapota a GitHub Actions / Pages felületen ellenőrizhető.
 
 ## Használat
 
+0. Az **Útmutató** fül részletes, példákkal illusztrált használati leírást ad. A **?** súgók rámutatással, billentyűzet-fókusszal és koppintással nyithatók. A háromszögcsúcsok nevét kattintva vagy Enterrel a csúcsok részletes jelentése olvasható, a terv módosítása nélkül.
 1. Add meg a családot, keretet, munkaórát, a ház és tevékenységek minimum–kívánt mennyiségeit. A rögzítés a kívánt értéket tartja meg.
 2. A háromszögek pontjai húzhatók, és billentyűzettel használható csúszkákat is kapnak. A két pénzügyi nézet közül az aktív érvényesül, a gazdálkodási háromszög az engedélyezett megoldásokat módosítja.
-3. Ments családi JSON-t. Az összes alapadat és hozzáadott forrás bekerül. A böngésző helyi tárhelye kényelmi mentés; a hordozható biztonsági másolat a JSON.
-4. A reveal partyn tölts be családi JSON-okat, és egyeztesd az összevonásokat. A közösnek jelölt tétel nem vonódik össze automatikusan. Kezdetben a telek vételárrésze és a közös költségek egyenlően oszlanak meg; a vételárrész és a közös óravállalás módosítható.
-5. Opcionálisan adj meg havi pénzvállalásokat és egy konkrét telek Ft/m² árát. Ár nélkül nincs megvásárolható maximális hektárbecslés. Az alternatív pénzügyi kiegyenlítés csak lehetőségként jelenik meg.
-6. A közös munkamenet JSON-ja az egyeztetésekkel együtt visszatölthető. Új család hozzáadásakor, eltávolításakor vagy frissítésekor az egyeztetések visszaállnak. Kattints a család pontjára, ha a jelenlegi családi tervvel szeretnéd frissíteni.
+3. Opcionálisan adj meg a családi nézetben **Telekár · Ft/m²** árat. A 0 vagy üres mező ismeretlen árat jelent. A telekigényhez szükséges vételár és vásárlási járulékok külön jelennek meg; mellettük a teljes terv költsége, a rendelkezésre álló keret és a finanszírozási hiány. A vételárkeret kijelzése nem lehet negatív: fedezethiánynál 0 Ft, külön hiányjelzéssel. A régi, telekár nélküli JSON-ok változatlanul betölthetők.
+4. Ments családi JSON-t. Az összes alapadat és hozzáadott forrás bekerül. A böngésző helyi tárhelye kényelmi mentés; a hordozható biztonsági másolat a JSON.
+5. A reveal partyn tölts be családi JSON-okat, és egyeztesd az összevonásokat. A közösnek jelölt tétel nem vonódik össze automatikusan. Kezdetben a telek vételárrésze és a közös költségek egyenlően oszlanak meg; a vételárrész és a közös óravállalás módosítható.
+6. Opcionálisan adj meg havi pénzvállalásokat és egy konkrét telek Ft/m² árát. Ár nélkül nincs megvásárolható maximális hektárbecslés. Az alternatív pénzügyi kiegyenlítés csak lehetőségként jelenik meg.
+7. A közös munkamenet JSON-ja az egyeztetésekkel együtt visszatölthető. Új család hozzáadásakor, eltávolításakor vagy frissítésekor az egyeztetések visszaállnak. Kattints a család pontjára, ha a jelenlegi családi tervvel szeretnéd frissíteni.
 
 Legfeljebb 24 család és 2 MB-os JSON-fájlok kezelhetők. Azonos tartalmú családi terveket az import nem ad hozzá kétszer. A fájlok nem kerülnek szerverre; személyes pénzügyi adatokat tartalmazhatnak.
 
@@ -45,7 +47,7 @@ Az **Alapadatok** nézetben minden együttható látható és módosítható, fo
 
 A kutatási források eredeti oldalait a környezet hálózati korlátozása miatt nem lehetett önállóan ellenőrizni. Nem tekintjük garantált mai építési árnak a nettó vagy régi árakat; nincs automatikus 5%-os áfaalkalmazás. A külföldi állattartási irányértékek nem magyar szabályozási minimumok. A juh üzemi munkaadata és az észak-dakotai legelő hektár/hó adata nem került automatikusan a háztáji modellbe.
 
-További adatkutatás: konyhakerti és gyümölcsös munka/víz; állatonkénti munka; helyi takarmányhozam és ár; konkrét közműkapacitás és díj; építési ajánlatok alapterület- és áfatartalma. A számított eredményt ezek tisztázásáig tervezési becslésként kell kezelni.
+További adatkutatás: konyhakerti és gyümölcsös munka/víz; állatonkénti munka; helyi takarmányhozam és ár; konkrét közműkapacitás és díj; építési ajánlatok alapterület- és áfatartalma. A számított eredményt ezek tisztázásáig tervezési becslésként kell kezelni. A kézzel megadott telekárat is felhasználói feltételezésként kezeljük, nem piaci adatkutatásként.
 
 ## Ellenőrzés
 

@@ -54,6 +54,7 @@ export function defaultPlan() {
   return {
     schemaVersion:1, dataVersion:DATA_VERSION,
     family:{ name:'A mi családunk', adults:2, children:1, budget:100000000, availableHours:100, livingMonthly:240000 },
+    landQuote:{unitPrice:0},
     home:{ min:80, wish:120, locked:false, level:'standard', ownWorkPct:0 },
     reserve:{ min:6, wish:12, locked:false },
     site:{ paths:150, storage:40, parking:45, expansion:200, wastewater:25, fence:1200000, tools:800000, ownedTools:false, outbuildings:3000000, surveys:700000, relocation:500000, otherSetup:0, otherMonthly:0, toolsScope:'family',fenceScope:'shared',outbuildingsScope:'family' },

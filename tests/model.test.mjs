@@ -19,6 +19,20 @@ test('default plan is valid; accounting includes closing costs and reserves',()=
   close(r.breakdown.reduce((s,x)=>s+x.value,0),p.family.budget);
   assert.ok(Object.values(p.sources).every(s=>s.url.startsWith('https://')));
 });
+test('legacy JSON without a land quote remains valid and has an unknown land cost',()=>{
+  const p=defaultPlan();delete p.landQuote;const restored=validatePlan(p);assert.deepEqual(restored.landQuote,{unitPrice:0});
+  const r=calculate(restored);assert.equal(r.landPrice,null);assert.equal(r.purchaseFees,null);assert.equal(r.totalWithLand,null);assert.equal(r.maximumArea,null);
+  restored.landQuote.unitPrice=-1;assert.throws(()=>validatePlan(restored));
+});
+test('manual land price separates purchase cost, available funds and total shortfall',()=>{
+  const p=blank(10000000);p.home={min:20,wish:40,locked:true,level:'economy',ownWorkPct:0};p.assumptions.buildEconomy=100000;p.assumptions.purchasePct=5;p.assumptions.purchaseFixed=250000;p.landQuote.unitPrice=10000;
+  const r=calculate(p);close(r.landArea,120);close(r.nonLandTotal,4000000);close(r.landPrice,1200000);close(r.purchaseFees,310000);close(r.totalWithLand,5510000);close(r.totalGap,0);close(r.affordableLandBudget,5750000/1.05);close(r.maximumArea,r.affordableLandBudget/10000);
+});
+test('underfunded plans have no available purchase budget and an honest pre-land deficit',()=>{
+  const p=blank(10000000);p.home={min:100,wish:100,locked:true,level:'economy',ownWorkPct:0};p.assumptions.purchasePct=5;p.assumptions.purchaseFixed=250000;
+  const unknown=calculate(p);close(unknown.nonLandTotal,50000000);close(unknown.budgetGap,40000000);close(unknown.affordableLandBudget,0);assert.equal(unknown.landPrice,null);
+  p.landQuote.unitPrice=10000;const quoted=calculate(p);close(quoted.landPrice,3000000);close(quoted.purchaseFees,400000);close(quoted.totalGap,43400000);close(quoted.maximumArea,0);
+});
 test('locked values survive all triangle endpoints and the minimum scenario',()=>{
   const p=defaultPlan();p.home.locked=true;p.items[1].locked=true;p.reserve.locked=true;
   for(const w of [[1,0,0],[0,1,0],[0,0,1]]){p.preferences.balance=w;const r=calculate(p);close(r.homeArea,p.home.wish);assert.equal(r.rows[1].qty,p.items[1].wish);close(r.reserveMonths,p.reserve.wish);}

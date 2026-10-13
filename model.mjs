@@ -1,4 +1,4 @@
-import { CATALOGUE, DEFAULT_ASSUMPTIONS, SERVICES } from './data.mjs';
+import { CATALOGUE, DEFAULT_ASSUMPTIONS, SERVICES } from './data.mjs?v=20261013-2';
 
 export const clamp = (v,lo=0,hi=1) => Math.min(hi,Math.max(lo,v));
 const sum = (xs, fn=x=>x) => xs.reduce((s,x)=>s+fn(x),0);
@@ -75,11 +75,20 @@ export function calculate(plan,{minimum=false}={}) {
   const homeLand=homeArea*a.houseLandFactor;
   const siteLand=sum(['paths','storage','parking','expansion','wastewater'],k=>plan.site[k]);
   const landArea=homeLand+siteLand+sum(rows,x=>x.area);
+  const nonLandTotal=upfront+contingency+reserve;
+  const budgetGap=Math.max(0,-cashForLand);
+  const quote=plan.landQuote?.unitPrice||0;
+  const landPrice=quote>0?landArea*quote:null;
+  const purchaseFees=landPrice===null?null:landPrice*a.purchasePct/100+a.purchaseFixed;
+  const totalWithLand=landPrice===null?null:nonLandTotal+landPrice+purchaseFees;
+  const totalGap=totalWithLand===null?null:Math.max(0,totalWithLand-plan.family.budget);
+  const affordableLandBudget=Math.max(0,landBudget);
+  const maximumArea=quote>0?affordableLandBudget/quote:null;
   const hours=sum(rows,x=>x.hours),peakHours=sum(rows,x=>x.peakHours);
   const domesticWater=(plan.family.adults+plan.family.children)*a.personWater*365/12;
   const water=domesticWater+sum(rows,x=>x.water),peakWater=domesticWater+sum(rows,x=>x.peakWater);
-  return {homeArea,reserveMonths,feedShare,rows,serviceRows,house,design,farm,infrastructure,upfront,contingency,monthly,reserve,landBudget,cashForLand,homeLand,siteLand,landArea,hours,peakHours,water,peakWater,ownConstructionHours,autoFeedByKind,
-    breakdown:[{name:'Házépítés',value:house,color:'#d78c53'},{name:'Tervezés',value:design,color:'#e9ba7c'},{name:'Gazdaság indítása',value:farm,color:'#718a51'},{name:'Infrastruktúra, eszközök',value:infrastructure,color:'#99aaa3'},{name:'Biztonsági keret',value:contingency,color:'#d5bfa0'},{name:'Működési tartalék',value:reserve,color:'#8faeb4'},{name:'Telek és vásárlási költségek',value:Math.max(0,cashForLand),color:'#254f3c'}]};
+  return {homeArea,reserveMonths,feedShare,rows,serviceRows,house,design,farm,infrastructure,upfront,contingency,monthly,reserve,landBudget,cashForLand,homeLand,siteLand,landArea,hours,peakHours,water,peakWater,ownConstructionHours,autoFeedByKind,nonLandTotal,budgetGap,landPrice,purchaseFees,totalWithLand,totalGap,affordableLandBudget,maximumArea,
+    breakdown:[{name:'Házépítés',value:house,color:'#d78c53'},{name:'Tervezés',value:design,color:'#e9ba7c'},{name:'Gazdaság indítása',value:farm,color:'#718a51'},{name:'Infrastruktúra, eszközök',value:infrastructure,color:'#99aaa3'},{name:'Biztonsági keret',value:contingency,color:'#d5bfa0'},{name:'Működési tartalék',value:reserve,color:'#8faeb4'},{name:'Telekvásárlásra megmaradó pénz',value:Math.max(0,cashForLand),color:'#254f3c'}]};
 }
 
 const positiveFields=['area','setup','monthly','water','hours','peak','waterPeak'];
@@ -93,6 +102,8 @@ function range(x,label,max) {
 export function validatePlan(raw) {
   if(!raw||raw.schemaVersion!==1) throw new Error('Ismeretlen tervformátum. 1-es verziójú családi JSON szükséges.');
   const p=JSON.parse(JSON.stringify(raw));
+  p.landQuote??={unitPrice:0};
+  number(p.landQuote.unitPrice,'Kézzel megadott telekár',0,1e9);
   if(typeof p.family?.name!=='string'||!p.family.name.trim()||p.family.name.length>80) throw new Error('A családnév 1–80 karakter lehet.');
   for(const k of ['adults','children']) {number(p.family[k],k,0,100);if(!Number.isInteger(p.family[k]))throw new Error('A létszám egész szám legyen.');}
   if(p.family.adults+p.family.children===0)throw new Error('Legalább egy családtag szükséges.');
