@@ -2,6 +2,8 @@
 
 Ez a szolgáltatás javasolt kialakítása; a repositoryban jelenleg nincs működő hirdetésbeolvasó API, és személyes szerverre sem telepítettünk semmit. A statikus kalkulátor kézi adatokkal és a beküldött referenciahirdetésekkel önállóan használható.
 
+A megvalósítás előkészítéséhez elkészült a [részletes scope és API-szerződés](private-backend-scope.md), a [helyben kiadható fejlesztési prompt](private-backend-prompt.md) és a [Jira-ba másolható taskbontás](private-backend-jira.md). A prompt alapállapota csak helyi felmérés; implementálás és privát telepítés külön választható fázis.
+
 ## Ajánlott megoldás
 
 A GitHub Pages marad a nyilvános kalkulátor. A csapatnak a saját szerveren ugyanennek a felületnek egy privát példánya és a beolvasó API **egy HTTPS-címen** fusson:

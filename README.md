@@ -169,6 +169,8 @@ A `property-analysis.mjs` külön elemzőmodul a meglévő `calculate` / `aggreg
 
 Most kézi / referenciaadatokkal működik, automatikus hirdetéslink-beolvasás nincs. A csak saját csapatnak szánt, Docker + Tailscale Serve alapú későbbi API javaslata: [Privát backend](docs/private-backend.md).
 
+A helyi megvalósítás előkészítéséhez: [strukturált fejlesztési prompt](docs/private-backend-prompt.md), [scope és API-szerződés](docs/private-backend-scope.md), [11 Jira-task előzetes bontása](docs/private-backend-jira.md). A prompt alapállapotban csak felmér, nem telepít; a dokumentumok tervek, nem kész API-funkciók.
+
 Célzott ellenőrzések:
 
 ```sh
