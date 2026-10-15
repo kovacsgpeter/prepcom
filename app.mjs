@@ -1,3 +1,4 @@
+import {setupPropertyView} from './property-view.mjs?v=20261015-2';
 import {familyWork,groupWork} from './labor.mjs?v=20261013-8';
 import {costDetails,landAnalysis,landScenarios,LAND_COLORS} from './explain.mjs?v=20261013-8';
 import {WOOD_FIELDS} from './wood.mjs?v=20261013-8';
@@ -5,7 +6,7 @@ import {FOOD_PRODUCTS,FOOD_PRODUCERS} from './food.mjs?v=20261013-8';
 import { defaultPlan, DATA_VERSION, SOURCES, SERVICES } from './data.mjs?v=20261013-8';
 import { RESEARCH, COLLECTION_URL, RESEARCH_DATE } from './research.mjs';
 import { DOCUMENT_TABLES, DOCUMENT_LINKS } from './research-document.mjs';
-import {familyMapData,groupMapData,renderEstateMap,connectEstateMaps} from './plot.mjs?v=20261013-8';
+import {familyMapData,groupMapData,renderEstateMap,connectEstateMaps} from './plot.mjs?v=20261015-2';
 import { calculate, validatePlan, aggregate, pointFromWeights, weightsFromPoint, clamp, VERTICES } from './model.mjs?v=20261013-8';
 
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
@@ -47,6 +48,7 @@ const FIELD_HELP={
 };
 function fieldHelp(path){if(path.startsWith('items.')){const field=path.split('.').at(-1);return {min:'Az a legkisebb mennyiség, amit még elfogadtok. A gazdaságcsúcs a minimum és a kívánt érték között módosítja a mennyiséget. Állat- és faszámot egészre kerekítünk.',wish:'A kívánt mennyiség. A gazdaságcsúcs felé mozdulva ehhez közelít a terv. Rögzítéskor mindig ez marad.',locked:'Bekapcsolva a kívánt mennyiség marad minden nézetben és a minimumtervben is.',owned:'Az induló beszerzési vagy telepítési költséget kihagyjuk. A havi fenntartás, víz, munka és terület továbbra is kell.',quantityMode:'Kézi módban megadsz darabszámot vagy m²-t. Önellátási módban az éves családi fogyasztás választott százalékából és az éves felhasználható hozamból számítjuk a mennyiséget.',selfTargetPct:'Az éves családi termékigény ekkora részét szeretnéd e tevékenységből fedezni. Állatok, fák és bokrok száma felfelé egészre kerekül; a többlet külön látszik. A cél rögzített, a háromszög nem csökkenti. Több azonos termékű tevékenység célját oszd meg egymás között.',scope:'A közös jelölés egyeztetési javaslat. A reveal partyn kell elfogadni az összevonást és a közös mennyiséget; addig a tételek külön számítanak.'}[field];}if(path.startsWith('wood.'))return {standStatus:'Új telepítésnél az első kitermelés várakozási idejét számoljuk. A meglévő opció már korosztályokra osztott, kitermelhető állományt feltételez; a szárítás ideje ilyenkor is számít.',storageProvided:'Csak ha az alap tároló / műhely helyében már biztosított a számolt száradó és száraz készlet tárolása. Ilyenkor itt nem adunk új tárolóterületet és építési költséget.',startingStockOwned:'Az induló száraz készlet beszerzési árát kihagyjuk. A tárolás és a későbbi kitermelési munka továbbra is kell.'}[path.split('.')[1]]||'Módosítható, forrás nélküli tűzifa-tervezési próbaérték. A térfogat mindig tömör m³, nem rakott vagy ömlesztett m³. Az éves átlaghozamot különválasztjuk az első kitermelés és szárítás várakozási idejétől. A mezőhöz saját forrás kapcsolható.';if(path.startsWith('food.'))return 'Módosítható tervezési próbaérték, igazolt forrás nélkül. Az éves hozam és a családnak felhasználható hányad szorzata a nettó mennyiség; a fogyasztás ugyanazon termék minden termelőjénél közös. Az adat forrását a mező melletti szerkesztőben rögzítheted.';return FIELD_HELP[path];}
 function helpButton(label,text){if(!text)return '';const id=`help-${++helpSequence}`;return `<button type="button" class="help-button" data-help aria-expanded="false" aria-describedby="${id}" aria-label="Segítség: ${escape(label)}">?<span id="${id}" class="help-tooltip" role="tooltip">${escape(text)}</span></button>`;}
+let propertyView=null;
 const FAMILY_KEY='gyoker-family-v5', GROUP_KEY='gyoker-group-v5';
 let plan=validatePlan(defaultPlan()), families=[], groupConfig={decisions:{},landShares:[],workHours:[],monthlyPledges:[],hourlyRate:3000,externalRate:5000,externalHelp:false,landPrice:0};
 let activeTab='family', toastTimer, selectedFamily=-1, storageIssue='';
@@ -65,6 +67,7 @@ function notify(message) {clearTimeout(toastTimer);$('#toast').textContent=messa
 function persist() {
   try {localStorage.setItem(FAMILY_KEY,JSON.stringify(plan));localStorage.setItem(GROUP_KEY,JSON.stringify({families,config:groupConfig}));$('#autosave-status').textContent='✓ Helyben mentve';}
   catch {$('#autosave-status').textContent='Helyi mentés nem sikerült — ments JSON-t';}
+  if(activeTab==='property')propertyView?.refresh();
 }
 function get(path,obj=plan) {return path.split('.').reduce((o,k)=>o?.[k],obj);}
 function set(path,value,obj=plan) {const ks=path.split('.');let ref=obj;for(const k of ks.slice(0,-1))ref=ref[k];ref[ks.at(-1)]=value;}
@@ -274,7 +277,7 @@ function groupSources(p) {
   return `<details><summary>A kijelölt család mentett forrásai</summary><p class="help-text">Ezek a családi JSON saját forrásai, nem a jelenleg szerkesztett családi tervé. A forrás nélkül maradó együtthatók becslések.</p><div class="table-wrap"><table><thead><tr><th>Adat</th><th>Mentett érték</th><th>Forrás és körülmények</th></tr></thead><tbody>${Object.entries(p.sources).filter(([,s])=>s.url).map(([key,s])=>{let value,label='Egyéb gyűjtött adat';if(key.startsWith('catalogue.')){const [,id,field]=key.split('.'),c=p.catalogue.find(c=>c.id===id);value=c?.[field];label=`${c?.name||'Tevékenység'} · ${coefficientLabels[field]?.[0]||'együttható'}`;}else {value=get(key,p);if(key.startsWith('assumptions.'))label=assumptionLabels[key.split('.')[1]]?.[0]||label;else if(key.startsWith('wood.'))label=`Tűzifa · ${WOOD_FIELDS[key.split('.')[1]]?.[0]||key}`;else if(key.startsWith('food.')){const [,kind,id,field]=key.split('.');label=`${kind==='consumption'?FOOD_PRODUCTS[id]?.name:p.catalogue.find(c=>c.id===id)?.name} · ${field==='annualYield'?'éves hozam':field==='usablePct'?'felhasználható hányad':'éves fogyasztás'}`;}else if(key.startsWith('serviceCatalogue.')){const [,id,,option,metric]=key.split('.');label=`${p.serviceCatalogue[id]?.name||'Közmű'} · ${p.serviceCatalogue[id]?.options[option]?.name||''} · ${metric==='setup'?'telepítés':'fenntartás'}`;}}return `<tr><td>${escape(label)}</td><td>${typeof value==='number'?fmt(value,4):'—'}</td><td><a href="${escape(s.url)}" target="_blank" rel="noopener noreferrer">${escape(s.title||'Forrás')} ↗</a><span class="cell-note">${escape(s.date||'')} · ${s.status==='estimate'?'Becslés':s.status==='verified'?'Ellenőrzött':'Beküldött, ellenőrizendő'}</span><span class="cell-note">${escape(s.note||'')}</span></td></tr>`;}).join('')}</tbody></table></div></details>`;
 }
 
-function showTab(tab) {activeTab=tab;$$('.tab-panel').forEach(p=>p.hidden=p.id!==`tab-${tab}`);$$('.nav-button').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));if(tab==='reveal')renderGroup();if(tab==='method')renderMethod();}
+function showTab(tab) {activeTab=tab;$$('.tab-panel').forEach(p=>p.hidden=p.id!==`tab-${tab}`);$$('.nav-button').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));if(tab==='reveal')renderGroup();if(tab==='method')renderMethod();if(tab==='property')propertyView?.refresh();}
 function renderAll() {renderInputs();renderResults();renderTriangles();renderMethod();renderGroup();persist();}
 function syncFields(path) {
   $$(`[data-path="${path}"]`).forEach(el=>{if(el!==document.activeElement){if(el.type==='checkbox')el.checked=get(path);else el.value=get(path);}});
@@ -310,6 +313,7 @@ document.addEventListener('change',e=>{
 function commitGroup(candidate) {try{aggregate(families.map(f=>f.plan),candidate);const clean=cleanGroupConfig(candidate,families.length);aggregate(families.map(f=>f.plan),clean);groupConfig=clean;renderGroup();persist();}catch(e){notify(e.message);}}
 document.addEventListener('click',e=>{
   const el=e.target.closest('button,[data-tab]');
+  if(el?.dataset.propertyEntry)propertyView?.setMode(el.dataset.propertyEntry);
   if(el?.dataset.tab){showTab(el.dataset.tab);return;}
   if(el?.dataset.mode){plan.preferences.budgetMode=el.dataset.mode;renderTriangles();renderResults();persist();}
   if(el?.dataset.removeItem!==undefined){plan.items.splice(Number(el.dataset.removeItem),1);renderInputs();renderResults();persist();}
@@ -357,6 +361,7 @@ $('#group-files').addEventListener('change',async e=>{
   }catch(err){notify(err.message);}finally{e.target.value='';}
 });
 renderAll();if(storageIssue)notify(storageIssue);
+propertyView=setupPropertyView({root:$('#property-content'),getContext:()=>({plan,families:families.map(f=>f.plan),groupConfig}),onImport:()=>$('#group-files').click(),onDownload:download});
 connectEstateMaps();
 function positionHelp(button){const tip=button.querySelector('.help-tooltip'),rect=button.getBoundingClientRect(),width=Math.min(320,innerWidth-32);tip.style.left=`${clamp(rect.left-width/2,16,Math.max(16,innerWidth-width-16))}px`;tip.style.top=`${clamp(rect.bottom+9,16,Math.max(16,innerHeight-tip.offsetHeight-16))}px`;}
 document.addEventListener('pointerover',e=>{const b=e.target.closest('.help-button');if(b){b.classList.remove('dismissed');positionHelp(b);}});

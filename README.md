@@ -152,3 +152,26 @@ A `self-sufficiency.mjs` az alkalmazás meglévő `calculate` függvényét hasz
 Ellenőrzés: `node --test tests/*.test.mjs`, valamint `tests/self-articles-browser.cjs` a korábban megadott Playwright-beállításokkal.
 
 A blogkártyák és a cikkfejlécek közös szerzői jelvénye az `assets/gyoker-admin.svg`; a szerző neve **Gyökér admin**. Az „Első változat” pontos időpontja a cikket először felvevő Git-commit ideje, Europe/Budapest időzónára átszámítva, géppel olvasható `<time datetime>` jelöléssel. Ez ellenőrizhető verzióidőpont, nem a GitHub Pages telepítésének mért ideje. Az új cikkeknél a kártya és cikkfejléc szerzőjét, illetve időpontját együtt kell kitölteni.
+
+## Konkrét ingatlan · a Reveal party utáni harmadik lépés
+
+A **Konkrét ingatlan** fül a betöltött családok és egyeztetett közös tételek változatlan számításaiból indul. A teljes ingatlanár és az egyszeri vételi járulék kerül a CAPEX-be, a Reveal party vételi arányaival. A korábbi családi fix vételi díjakat nem vonja le még egyszer. A családi pénzek automatikus kiegyenlítése nincs.
+
+A területarányos térkép külön zónája a **hasznosításra nem tervezett** és a **használatból kizárt** rész. A tervet túl kicsi ingatlannál nem zsugorítjuk észrevétlenül. A termőterület és lakóegységkorlát külön megadandó; ismeretlen esetben a becslés feltételes. A három beküldött hirdetés forráslinkje és bizonytalansága megmarad az adatlap mellett; a módosított referencia jelölést kap.
+
+Az ismétlés teljes csoportcsomagokat számol; a tört maradékból nem talál ki új családi összetételt. Külön mutatja a legnagyobb **önálló** területigényű család tervének ismétlését. A területi ismétlési becslés nem automatikus pénzügyi vagy munkaügyi megfelelőség. A teljes vételár megoszlik, nem csökken a kisebb hasznosított földtől. A területarányos többletvétel és annak alternatívaköltsége elemzési bontás, nem további levonás.
+
+Egyéni és mintacsalád mód is van: aktuális családi terv, betöltött helyi család vagy nyilvános 2 felnőtt + 2 gyerek példa választható. Privát családi JSON nem került a nyilvános mintába.
+
+A **Rögzített gazdaság → családszám** mód a kijelölt terv termelőegységeit rögzíti, és a pozitív éves saját élelmiszercélok legszűkebb fedezetéből indul. A kézi mennyiségű termelőknél induló cél 100%, ami átírható; a nyilvános példa gyümölcscélja 50%. Az 1–24 család ellenőrzése közben a gazdaság állatai / m²-ei és takarmányigénye állandó; a ház, általános családi infrastruktúra és megélhetés nő a létszámmal. A mennyiségek és célok módosítására újraszámol, de az eredeti terv nem módosul. A visszaállító gomb az aktuális mintaterv mennyiségeit veszi át. Bevételt a többlettermelésből nem feltételez.
+
+A `property-analysis.mjs` külön elemzőmodul a meglévő `calculate` / `aggregate` fölött. A családi és közösségi JSON-formátum és mentési kulcsok változatlanok. Az ingatlanadatlap és a rögzített gazdaság beállításai külön `gyoker-property-v1` helyi kulcson mentődnek. A letölthető `gyoker-property-summary` összegző riport külön dokumentum, nem visszatölthető családi / közösségi terv; a fő JSON-okat továbbra is külön kell menteni.
+
+Most kézi / referenciaadatokkal működik, automatikus hirdetéslink-beolvasás nincs. A csak saját csapatnak szánt, Docker + Tailscale Serve alapú későbbi API javaslata: [Privát backend](docs/private-backend.md).
+
+Célzott ellenőrzések:
+
+```sh
+node --test tests/*.test.mjs
+GYOKER_PLAYWRIGHT_MODULE=/opt/codex/runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright node tests/property-browser.cjs
+```
