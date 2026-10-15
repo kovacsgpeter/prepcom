@@ -150,3 +150,5 @@ A teljes ingatlanvétel és egyszeri vásárlási költség családonként oszli
 A `self-sufficiency.mjs` az alkalmazás meglévő `calculate` függvényét használja; a fő kalkulátort, JSON-formátumot és helyi mentéseket nem változtatja. A két cikk között csak a példa profilja kerül át a `gyoker-blog-self-profile` sessionStorage kulccsal. Ez ugyanazon böngésző-munkamenetre szól; nincs adatfeltöltés vagy családi mentés felülírása.
 
 Ellenőrzés: `node --test tests/*.test.mjs`, valamint `tests/self-articles-browser.cjs` a korábban megadott Playwright-beállításokkal.
+
+A blogkártyák és a cikkfejlécek közös szerzői jelvénye az `assets/gyoker-admin.svg`; a szerző neve **Gyökér admin**. Az „Első változat” pontos időpontja a cikket először felvevő Git-commit ideje, Europe/Budapest időzónára átszámítva, géppel olvasható `<time datetime>` jelöléssel. Ez ellenőrizhető verzióidőpont, nem a GitHub Pages telepítésének mért ideje. Az új cikkeknél a kártya és cikkfejléc szerzőjét, illetve időpontját együtt kell kitölteni.

@@ -118,3 +118,9 @@ A `tests/self-articles-browser.cjs` sikeres: négyfős forgatókönyvek, takarm�
 A családi/csoportos fő számítási fájlok változatlanok. A két új cikk szerkeszthető számításai a meglévő próbaadatokat használják; a tesztek azok szakmai helyességét és ingatlanok jogi/termőhelyi alkalmasságát nem igazolják. A cikkek külön jelzik a forrásolt / beküldött és forrás nélküli becsléseket, az életkor nélküli gyermekfogyasztási közelítést, a két tejelő kecske választott példaállományát, a gabona és takarmány elkülönítését, valamint a hipotetikus egyenlő pénz- és munkakereteket.
 
 A négy további korábbi böngészőpróba (`food-browser`, `crops-browser`, `wood-browser`, `explain-browser`) az új, kilencbejegyzéses Újdonságok oldallal is sikeres. A változásnál összesen hat böngészős programot futtattunk sikeresen.
+
+## Szerzői jelvények és időpontok · 2026. október 15.
+
+A három blogkártya ugyanazt a meglévő farmrajzot használja közös SVG-fájlból, Gyökér admin szerzőnévvel. A cikkek tetején név, avatar és másodperc pontosságú idő szerepel. A korábbi cikkidőket az első Git-verzió alapján rögzítettük Europe/Budapest időzónában: takarmányos cikk 2026.10.13. 16:54:38 +02:00; a két önellátási cikk 22:57:43 +02:00. Nem mért GitHub Pages telepítési időt állítunk.
+
+Böngészős ellenőrzés igazolta mindhárom egyező avatart a listában, a név- és dátumjelölést, a `<meta name="author">` és `<time datetime>` értékeket, az SVG tényleges betöltődését, valamint mindhárom oldalon a 390 px széles mobilnézetet. Asztali és mobil képernyőképek készültek, futási hiba nélkül. A meglévő `tests/self-articles-browser.cjs` is sikeres: a két önellátási cikk számítása, feltételes családszám, profilátvitel, vegyes célok és a korábbi mentések változatlan megőrzése működik. A változás nem érinti a számítási modulokat vagy az exportformátumokat.
