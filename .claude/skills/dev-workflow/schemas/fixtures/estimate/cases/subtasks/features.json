@@ -1,0 +1,26 @@
+{
+  "complexity": "M",
+  "ac_count": 21,
+  "design": false,
+  "plan_steps": 10,
+  "subtasks": [
+    {
+      "id": "ORD-701",
+      "type": "backend",
+      "executor": "local",
+      "ac_count": 4
+    },
+    {
+      "id": "ORD-702",
+      "type": "frontend",
+      "executor": "claude",
+      "ac_count": 9
+    },
+    {
+      "id": "ORD-703",
+      "type": "tests",
+      "executor": "local",
+      "ac_count": 8
+    }
+  ]
+}

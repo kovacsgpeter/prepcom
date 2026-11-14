@@ -1,0 +1,494 @@
+# dev-workflow — .gitlab-ci.yml SABLON egy fogyasztó repo számára (COCALC-320).
+#
+# Ez a fájl a dev-workflow csomag "versioned" tartalmának része (lásd a repo-gyökér
+# dev-workflow-manifest.json-t) — minden csomag-frissítéssel MINDIG felülíródik. A belőle
+# sarjadó, repo-lokális `.gitlab-ci.yml` viszont a manifest "seed_once" szemantikáját
+# követi: az `install-or-upgrade.sh` FRISS telepítésnél egyszer létrehozza ebből a
+# sablonból, utána SOHA nem írja felül — ha a sablon egy későbbi csomag-frissítéssel
+# megváltozik, a telepítő `.gitlab-ci.yml.new` + unified diff formájában jelzi, a
+# `.gitlab-ci.yml` maga változatlan marad. Így a fogyasztó repo szabadon testre szabhatja
+# a saját `.gitlab-ci.yml`-jét anélkül, hogy egy upgrade csendben felülírná.
+#
+# Mit ad ez a sablon (a wordcloud repo saját .gitlab-ci.yml-jének mintájára, de a
+# wordcloud-specifikus tartalom NÉLKÜL):
+#   - dup-pipeline védelem (workflow:rules), path-alapú "nehéz job" szűrő
+#     (detect-heavy-job-need), offline .gitlab-ci.yml szintaxis-lint (gitlab-ci-syntax-check);
+#   - a dev-workflow csomag ÖNELLENŐRZŐ job-jai (lásd lent "dev-workflow önellenőrző
+#     job-ok") — ugyanazok az invariánsok érvényesek BÁRMELY repóra, ami ezt a csomagot
+#     telepítette, nem csak a forrás (wordcloud) repóra;
+#   - a GitLab beépített SAST/Dependency-Scanning/Secret-Detection biztonsági
+#     template-jeinek bekötése, alapértelmezett biztonsági minimumként;
+#   - `<...>`-jelölt PLACEHOLDER build/test/lint app-jobok — ezeket a saját stackedre
+#     (frontend/backend build eszköz, image, parancsok) kell kitöltened/átneveznéd, vagy
+#     törölnöd, ha nincs rájuk szükséged;
+#   - `<...>`-jelölt PLACEHOLDER, MANUÁLIS Doppler-futtatású job (COCALC-320) — a
+#     ci/run-with-doppler.sh wrapperen keresztül futtatja a megadott parancsot, ha a
+#     DOPPLER_TOKEN/DOPPLER_PROJECT/DOPPLER_CONFIG GitLab CI/CD Variable-ök be vannak
+#     állítva (lásd a job saját fejléc-kommentjét lent).
+#
+# Mi HIÁNYZIK szándékosan (repo-specifikus, nem generalizálható, a wordcloud saját,
+# élő .gitlab-ci.yml-jében kézzel tartott tartalom marad):
+#   - candidate-env deploy/smoke/promóció (deploy/post-deploy stage, Docker-konténeres
+#     candidate/test-env infrastruktúra) — lásd COCALC-245;
+#   - termék-release (release stage, semver git tag + GitLab Release) — lásd COCALC-239;
+#   - Testcontainers/DooD-specifikus backend-build/backend-test env-változók
+#     (TESTCONTAINERS_RYUK_DISABLED stb.) — ezek egy konkrét, socket-bindinges self-hosted
+#     runner-setup workaroundjai, nem általánosíthatók;
+#   - wordcloud-specifikus top-level `variables:` blokk (image-nevek, konténer-nevek,
+#     hálózat-nevek stb.).
+#
+# `tags:` — a wordcloud saját pipeline-ja `[docker, windows]`-t használ (self-hosted,
+# Windows-os DooD runner) — ez SAJÁT infrastruktúra-részlet, ide szándékosan csak a
+# generikusabb `docker` tag került (ahol az eredeti jobnak egyáltalán volt tags-e).
+# Igazítsd a SAJÁT runnereid tag-jeihez, mielőtt élesben használnád.
+#
+# `<...>` alakú helyőrzők — töltsd ki a saját repódra konkretizált értékekkel (a
+# config.template.md ugyanezt a konvenciót követi).
+#
+# CI-készenlét (ORD-382): saját (nem megosztott) runnernél a `default: tags: [<runner-tag>]`
+# KÖTELEZŐ — tag nélkül a jobok (az include-olt SAST-jobok is) elakadnak. Ha a runner csak
+# védett refeken fut (`ref_protected`), a workflow branch-mintákat (`feature/*`, `fix/*`,
+# `refactoring/*`, `chore/*`, `build/*`) is védetté kell tenni (Settings → Repository →
+# Protected branches). Ellenőrzés: `bash .claude/skills/dev-workflow/scripts/check-ci-readiness.sh`
+# (csak olvas; a bootstrap és a dev-workflow-execute 0. lépése is futtatja).
+
+# Duplikált pipeline elleni védelem: enélkül egy nyitott MR-es branch-re pusholt commit
+# EGYSZERRE branch-pipeline-t (source: push) ÉS merge-request-pipeline-t (source:
+# merge_request_event) indítana ugyanarra a commitra. Ez csak az MR-pipeline-t tartja meg,
+# ha van nyitott MR, egyébként csak a default branch-en fut.
+# https://docs.gitlab.com/ci/pipelines/pipeline_types/#prevent-duplicate-pipelines
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+
+stages:
+  - build
+  - test
+  - code-quality
+  - publish
+
+# Cache-váz — igazítsd a saját build-eszközeidhez (a lenti két blokk egy tipikus
+# npm + Gradle-szerű elrendezést illusztrál, a wordcloud saját cache-ének mintájára).
+# Ha csak egy stack van, töröld a másik blokkot; ha egyik sem illik, írd át teljesen.
+cache:
+  - key:
+      files:
+        - <FRONTEND_LOCKFILE_PATH>
+    paths:
+      - <FRONTEND_CACHE_DIR>
+  - key:
+      files:
+        - <BACKEND_LOCKFILE_PATH>
+    paths:
+      - <BACKEND_CACHE_DIR>
+
+# Alapértelmezett biztonsági minimum (COCALC-320 4. döntés) — a GitLab beépített
+# SAST / Dependency-Scanning / Secret-Detection template-jei. Ezek önmagukban a `test`
+# stage-be tennék a saját jobjaikat, tag nélkül — ha a runnereid tag-alapú szűrést
+# használnak (mint a wordcloud saját `[docker, windows]`-e), a jobok `created`/`pending`
+# maradnak, amíg felül nem írod a stage-üket/tags-üket (lásd a wordcloud saját
+# .gitlab-ci.yml-jét a `semgrep-sast` / `gemnasium-dependency_scanning` /
+# `secret_detection` override-blokkjaiért mintaként).
+include:
+  - template: Security/SAST.gitlab-ci.yml
+  - template: Security/Dependency-Scanning.gitlab-ci.yml
+  - template: Security/Secret-Detection.gitlab-ci.yml
+
+# ============================================================================
+# Path-alapú "nehéz job" szűrő (a wordcloud .gitlab-ci.yml detect-heavy-job-need mintája,
+# a wordcloud-specifikus mintaadat-fájl-kizárások NÉLKÜL genericizálva).
+# ============================================================================
+# Ha egy MR-pipeline-on a változás KIZÁRÓLAG az alábbi "könnyű" útvonalakat érinti (pl.
+# csak `.claude/**` vagy csak egy README módosult), a lenti nehéz jobok (a placeholder
+# build/test jobok, és bármi más, amit ide bekötsz) kihagyhatók RUN_HEAVY_JOBS-szal —
+# lásd a placeholder jobok `rules:`-át. `master` push-on ez a job rules miatt nem is fut,
+# ott mindig a teljes lánc megy.
+#
+# ⚠️ Miért nem natív `rules:changes:`? A GitLab `rules:changes:` "fusson, ha A VALAMELYIK
+# felsorolt útvonal megváltozott" (OR-logika) — nem tudja kifejezni a "KIZÁRÓLAG ezek
+# változtak" (AND/negációs) feltételt. Ezért egy `.pre`-stage detector job tényleges
+# `git diff`-et futtat, és egy dotenv-artifacton keresztül ad át egy RUN_HEAVY_JOBS
+# true/false változót.
+detect-heavy-job-need:
+  stage: .pre
+  image:
+    name: alpine/git:latest
+    # Az `alpine/git` image saját `ENTRYPOINT ["git"]`-et állít be — az üres entrypoint
+    # felülírja ezt, hogy a script sima shell-parancsként fusson (ne a `git` argumentuma
+    # legyen az `sh -c "..."` hívás).
+    entrypoint: [""]
+
+  variables:
+    GIT_DEPTH: "0"
+
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+
+  script:
+    - git fetch origin "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME"
+    - git diff --name-only "origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME"...HEAD > changed-files.txt
+    - echo "Változott fájlok a target branch-hez képest:"
+    - cat changed-files.txt
+    - |
+      RUN_HEAVY_JOBS=false
+      while IFS= read -r f; do
+        [ -z "$f" ] && continue
+        case "$f" in
+          .claude/*|.agents/*|.codex/*|*.md|.idea/*|.vscode/*|archived/*|tools/*)
+            ;;
+          *)
+            RUN_HEAVY_JOBS=true
+            ;;
+        esac
+      done < changed-files.txt
+      echo "RUN_HEAVY_JOBS=$RUN_HEAVY_JOBS" > build.env
+      cat build.env
+
+  artifacts:
+    reports:
+      dotenv: build.env
+
+# Offline .gitlab-ci.yml well-formedness + GitLab-CI séma-lint — feltétel nélküli
+# (nincs RUN_HEAVY_JOBS-őr): egy csak-`.gitlab-ci.yml` / csak-`ci/**` változás pont az az
+# eset, amit ez a job véd, a fenti heavy-skip ide nem vonatkozhat. A tényleges logika a
+# ci/verify-gitlab-ci-syntax.sh-ban van (a dev-workflow csomag része, "versioned").
+gitlab-ci-syntax-check:
+  stage: .pre
+  image: alpine:latest
+  tags:
+    - docker
+
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+
+  before_script:
+    - apk add --no-cache python3 py3-yaml
+
+  script:
+    - sh ci/verify-gitlab-ci-syntax.sh
+
+# ============================================================================
+# `<...>` jelölt PLACEHOLDER app-jobok — töltsd ki / nevezd át / töröld, amire nincs
+# szükséged. A 3 job a build/test/code-quality minta illusztrációja (RUN_HEAVY_JOBS-őrrel,
+# interruptible-lel, cache-hivatkozással, a wordcloud angular-build/frontend-test/
+# frontend-lint jobjainak szerkezete alapján) — amíg a helyőrzőket ki nem töltötted, ez a
+# 3 job NEM futtatható.
+# ============================================================================
+<APP_BUILD_JOB_NAME>:
+  stage: build
+  # Új commit ugyanarra a branch-re/MR-re megszakítja ezt a futó jobot (biztonságos
+  # build/teszt jobnál, deploy jellegűnél NEM az).
+  interruptible: true
+  image: <BUILD_IMAGE>
+  tags:
+    - docker
+
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $RUN_HEAVY_JOBS == "false"'
+      when: never
+    - when: on_success
+
+  before_script:
+    - cd <APP_DIR>
+    - <INSTALL_DEPENDENCIES_COMMAND>
+
+  script:
+    - <BUILD_COMMAND>
+
+  artifacts:
+    expire_in: 7 days
+    paths:
+      - <BUILD_OUTPUT_PATH>
+
+<APP_TEST_JOB_NAME>:
+  stage: test
+  interruptible: true
+  image: <BUILD_IMAGE>
+  tags:
+    - docker
+
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event" && $RUN_HEAVY_JOBS == "false"'
+      when: never
+    - when: on_success
+
+  before_script:
+    - cd <APP_DIR>
+    - <INSTALL_DEPENDENCIES_COMMAND>
+
+  script:
+    - <TEST_COMMAND>
+
+  artifacts:
+    when: always
+    expire_in: 7 days
+    reports:
+      junit: <APP_DIR>/<JUNIT_REPORT_PATH>
+
+<APP_LINT_JOB_NAME>:
+  stage: code-quality
+  image: <BUILD_IMAGE>
+  tags:
+    - docker
+
+  before_script:
+    - cd <APP_DIR>
+    - <INSTALL_DEPENDENCIES_COMMAND>
+
+  script:
+    - <LINT_COMMAND>
+
+# ============================================================================
+# `<...>`-jelölt PLACEHOLDER Doppler-futtatású job (COCALC-320, AC10) — ha egy
+# build/deploy/teszt parancsod prod-jellegű secretet igényel (pl. JWT secret, DB
+# jelszó, SMTP hitelesítő), a ci/run-with-doppler.sh wrapperen keresztül futtathatod.
+# MANUÁLIS (csak akkor indul, ha explicit elindítod) — töltsd ki a helyőrzőket a saját
+# parancsoddal, vagy töröld ezt a jobot, ha nincs Doppler-integrációd.
+#
+# Szükséges GitLab CI/CD Variable-ök (Settings > CI/CD > Variables — a tényleges
+# értékek SOHA nem kerülhetnek repóba/dokumentációba):
+#   DOPPLER_TOKEN   - Doppler Service Token, Protected + Masked. A ci/run-with-doppler.sh
+#                     ezt ENV-VÁLTOZÓKÉNT olvassa, NEM CLI-argumentumként adja tovább a
+#                     Doppler CLI-nek (pl. NEM `--token=$DOPPLER_TOKEN`) — a wrapper
+#                     tudatos biztonsági döntése, hogy a token ne látsszon a job
+#                     process-listájában/ps kimenetében.
+#   DOPPLER_PROJECT - a Doppler-projekt neve (nem titkos, repónkénti érték).
+#   DOPPLER_CONFIG  - a Doppler-config neve (pl. "ci"; nem titkos, repónkénti érték).
+# ============================================================================
+<APP_DOPPLER_JOB_NAME>:
+  stage: build
+  image: <BUILD_IMAGE>
+  tags:
+    - docker
+
+  rules:
+    - when: manual
+
+  before_script:
+    - <INSTALL_DOPPLER_CLI_COMMAND>
+
+  script:
+    - sh ci/run-with-doppler.sh <DOPPLER_WRAPPED_COMMAND>
+
+# ============================================================================
+# dev-workflow önellenőrző job-ok — a wordcloud saját .gitlab-ci.yml-jének mintájára.
+# Ezek a dev-workflow csomag ("versioned" fa: .claude/skills/, .claude/agents/,
+# .claude/tools/, .agents/, AGENTS.md) integritását/portabilitását őrzik BÁRMELY repóban,
+# ami telepítette a csomagot — nem csak a forrás (wordcloud) repóban. Feltétel nélküli
+# `rules:` (nincs RUN_HEAVY_JOBS-őr): egy csak-`.claude/**` / csak-`ci/**` változás PONT
+# az az eset, amit ezek a jobok védenek.
+# ============================================================================
+
+# Guard: ha a manifest "versioned" listájában szereplő fájl változott a bázishoz képest,
+# de a repo-gyökér VERSION fájl nem nőtt, a pipeline elhasal. Csak akkor van értelme, ha a
+# TE repód is önálló forrása/karbantartója egy hasonló, verziózott csomagnak (mint a
+# wordcloud a dev-workflow-nak) — ehhez saját, semver-formátumú VERSION fájl kell a
+# repo-gyökéren. Ha nálad nincs ilyen forrás-szerep, töröld ezt a jobot.
+dev-workflow-version-check:
+  stage: test
+  interruptible: true
+  image:
+    name: alpine/git:latest
+    entrypoint: [""]
+
+  variables:
+    GIT_DEPTH: "0"
+
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+
+  script:
+    - sh ci/verify-dev-workflow-version-bump.sh
+
+# Az install-or-upgrade.sh telepítő/frissítő szkript automata öntesztje — szintetikus,
+# izolált fixture-csomaggal, valódi GitLab Package Registry hívás NÉLKÜL.
+dev-workflow-installer-check:
+  stage: test
+  interruptible: true
+  image:
+    name: alpine/git:latest
+    entrypoint: [""]
+
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+
+  script:
+    - sh ci/verify-dev-workflow-installer.sh
+
+# Az overrides.yaml alkalmazása a telepítőben (ORD-384): node kell, ezért külön job a node-os
+# image-en; a fenti alpine/git-es job node-mentes marad.
+dev-workflow-overrides-check:
+  stage: test
+  interruptible: true
+  image: node:22-bookworm
+
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+
+  script:
+    - sh ci/verify-dev-workflow-overrides.sh
+
+# A ténylegesen szállítandó dev-workflow archívum szivárgás-ellenőrzése — a repo VALÓS
+# gyökeréből építve/kicsomagolva, nem szintetikus fixture-rel. Csak akkor van értelme, ha
+# a TE repód is önálló forrása/karbantartója egy hasonló, verziózott csomagnak (mint a
+# wordcloud a dev-workflow-nak): a ci/verify-dev-workflow-archive-clean.sh a
+# ci/build-dev-workflow-archive.sh-on keresztül a repo-gyökéren megköveteli a
+# dev-workflow-manifest.json + VERSION fájlt, amiket a telepítő NEM teríti a fogyasztó
+# repóba (nincsenek sem a "versioned", sem a "repo_local_exceptions"/"seed_once"
+# listákon). Ha nálad nincs ilyen forrás-szerep, töröld ezt a jobot.
+dev-workflow-archive-leak-check:
+  stage: test
+  interruptible: true
+  image: alpine:latest
+
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+
+  before_script:
+    - apk add --no-cache tar grep >/dev/null
+
+  script:
+    - sh ci/verify-dev-workflow-archive-clean.sh
+
+# A session-cost-report eszköz öntesztje (ORD-366).
+session-cost-report-test:
+  stage: code-quality
+  image: node:22-bookworm
+  tags:
+    - docker
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+  script:
+    - node .claude/tools/session-cost-report/analyze.test.js
+    - node .claude/tools/session-cost-report/pricing.test.js
+    - node .claude/skills/dev-workflow/scripts/validate-run-metrics.test.js
+    - node .claude/skills/dev-workflow/scripts/collect-run-metrics.test.js
+    - node .claude/skills/dev-workflow/scripts/estimate/run-all-tests.js
+
+# Skill-portabilitás — a .claude/skills / .agents/skills fákba ne szivárogjon vissza
+# repo-/projekt-specifikus konfig-érték (Jira project key, repo-név stb.).
+# ⚠️ A wordcloud saját job-ja itt MÉG egy `verify-local-env-isolation-config.sh` hívást is
+# futtat — az wordcloud-specifikus (konkrét frontend/backend portokat/útvonalakat
+# ellenőriz), ezért szándékosan KIMARADT ebből a sablonból.
+skill-portability-check:
+  stage: code-quality
+  image: debian:bookworm-slim
+  tags:
+    - docker
+
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+
+  script:
+    - sh ci/verify-skill-portability.sh
+
+# Az agent- és skill-fájlok frontmatterje, valamint a Codex TOML-ok szintaxisa (ORD-379).
+agent-frontmatter-check:
+  stage: code-quality
+  image: node:22-bookworm
+  tags:
+    - docker
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+  script:
+    - sh ci/verify-agent-frontmatter.sh
+
+# A tervezésidejű fenyegetés-modellezés (kockázat-katalógus, fixture, config.md-bekötés)
+# konzisztenciája.
+threat-model-config-check:
+  stage: code-quality
+  image: debian:bookworm-slim
+  tags:
+    - docker
+
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+
+  script:
+    - sh ci/verify-threat-model-config.sh
+
+# Tracker-absztrakció — a dev-workflow skill-/subagent-fájlok NE nevezzenek meg
+# közvetlenül Jira/Atlassian MCP-eszközt, a tracker-adapter.md absztrakt művelet-neveit
+# használják helyette.
+tracker-abstraction-check:
+  stage: code-quality
+  image: debian:bookworm-slim
+  tags:
+    - docker
+
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+
+  script:
+    - sh ci/verify-tracker-mcp-abstraction.sh
+
+# A fenti őr beágyazott fixture-önteszteinek futtatása CI-ban, külön jobként.
+tracker-abstraction-selftest:
+  stage: code-quality
+  image: debian:bookworm-slim
+  tags:
+    - docker
+
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+
+  script:
+    - sh ci/verify-tracker-mcp-abstraction.sh --self-test
+
+# A dev-workflow csomag tar.gz-ének feltöltése egy GitLab Generic Package Registrybe.
+# MANUÁLIS, kizárólag a default branchen. Csak akkor van értelme, ha a TE repód a
+# forrása/karbantartója egy hasonló, verziózott csomagnak (mint a wordcloud a
+# dev-workflow-nak) — ha nálad nincs ilyen forrás-szerep, töröld ezt a jobot.
+dev-workflow-publish:
+  stage: publish
+  image: alpine:latest
+
+  variables:
+    DEV_WORKFLOW_DIST_PROJECT: "<DEV_WORKFLOW_DIST_PROJECT_PATH>"
+    DEV_WORKFLOW_PACKAGE_NAME: "<DEV_WORKFLOW_PACKAGE_NAME>"
+
+  rules:
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+      when: manual
+    - when: never
+
+  before_script:
+    - apk add --no-cache curl tar grep >/dev/null
+
+  script:
+    # Dupla védelem: a szivárgás-ellenőrzés blokkolóan a dev-workflow-archive-leak-check
+    # jobban is fut, de az upload előtt itt is lefuttatjuk.
+    - sh ci/verify-dev-workflow-archive-clean.sh
+    - VERSION="$(cat VERSION)"
+    - ARCHIVE="dev-workflow-${VERSION}.tar.gz"
+    - sh ci/build-dev-workflow-archive.sh --output "$ARCHIVE"
+    - PROJECT_ENC="$(printf '%s' "$DEV_WORKFLOW_DIST_PROJECT" | sed 's#/#%2F#g')"
+    - |
+      if [ -n "${DEV_WORKFLOW_PUBLISH_TOKEN:-}" ]; then
+        AUTH_HEADER="PRIVATE-TOKEN: $DEV_WORKFLOW_PUBLISH_TOKEN"
+      else
+        echo "DEV_WORKFLOW_PUBLISH_TOKEN nincs beállítva — visszaesés a CI_JOB_TOKEN-re."
+        AUTH_HEADER="JOB-TOKEN: $CI_JOB_TOKEN"
+      fi
+      curl --fail --silent --show-error \
+        --header "$AUTH_HEADER" \
+        --upload-file "$ARCHIVE" \
+        "${CI_API_V4_URL}/projects/${PROJECT_ENC}/packages/generic/${DEV_WORKFLOW_PACKAGE_NAME}/${VERSION}/${ARCHIVE}?status=default"
+      echo "Feltoltve: ${DEV_WORKFLOW_PACKAGE_NAME}/${VERSION}/${ARCHIVE}"
+
+  artifacts:
+    paths:
+      - dev-workflow-*.tar.gz
+    expire_in: 30 days

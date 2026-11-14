@@ -1,0 +1,9 @@
+Becslés ORD-500 (M, 10 lépés, 2/4 helyi sub-task) — n=6 hasonló (k=5), ujjlenyomat: szigorú
+minta: ORD n=6
+            P50       P80
+Claude $    3.13      3.25  (test-sonnet 2.50 / test-haiku 0.63)
+Tokenek     900k      936k
+Falióra     1 ó 40 p  1 ó 47 p  (helyi LLM 25 p · Claude 1 ó 2 p · CI 13 p · javítókör 0–0)
+Aktív idő   30 p      32 p
+Korrekció: ×1.25 (n=4 korábbi becslés)
+P80 találati arány: költség 3/4, falióra 0/4

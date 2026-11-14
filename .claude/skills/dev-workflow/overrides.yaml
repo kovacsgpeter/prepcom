@@ -1,0 +1,23 @@
+# Repólokális felülírások az agent/skill fájlokhoz (ORD-384, 4.28.0)
+# A telepítő a csomag másolása után alkalmazza (Node 22 kell)
+# Szűk YAML-részhalmaz: csak blokk-mapping, 2 szóköz behúzás, # megjegyzés, skalár érték (sima vagy idézőjeles)
+# NINCS flow-mapping ({}), lista, horgony, többsoros skalár
+
+version: 1
+
+# agents:
+#   implementer:
+#     frontmatter:
+#       model: opus
+#       tools: Read, Grep, Bash(git status:*, git diff:*)
+# skills:
+#   dev-workflow-execute:
+#     body:
+#       file: execute-body.md          # az overrides/ mappában, csak a törzs (frontmatter nélkül)
+#       base_sha256: <a csomag-törzs sha256-ja, 64 kisbetűs hex>
+
+# Magyarázat:
+# - A kulcs agents.<név> az .claude/agents/<név>.md fájlt célozza.
+# - A kulcs skills.<név> az .claude/skills/<név>/SKILL.md fájlt célozza.
+# - A name kulcs nem írható felül.
+# - Ha a csomag törzse megváltozott (a hash nem egyezik), a csomag törzse marad és .override-conflict fájl keletkezik.

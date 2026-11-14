@@ -1,0 +1,6 @@
+{
+  "tool": "valami-mas-eszkoz",
+  "version": 3,
+  "data": [1, 2, 3],
+  "note": "ervenyes JSON, de nem az analyze.js report.json semaja (nincs phases[] tomb)"
+}

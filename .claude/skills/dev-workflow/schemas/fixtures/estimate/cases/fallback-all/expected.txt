@@ -1,0 +1,7 @@
+Becslés ORD-200 (M, 10 lépés, 2/4 helyi sub-task) — n=9 hasonló (k=5), ujjlenyomat: szigorú
+minta: minden projekt n=9 (ORD n=1)
+            P50       P80
+Claude $    2.75      3.08  (test-sonnet 2.20 / test-haiku 0.55)
+Tokenek     990k      1.1M
+Falióra     55 p      1 ó 0 p  (helyi LLM 14 p · Claude 34 p · CI 7 p · javítókör 0–0)
+Aktív idő   33 p      36 p

@@ -1,0 +1,14 @@
+name = "implementer"
+description = "TDD-alapú implementáció subagent. Ticket ID-t, Acceptance Criteria listát és egy már kicsekkolt branch-et kap; tesztet ír előbb, utána implementál, funkcionális egységenként külön commit-ol. Design-linkelt ticketnél a Figma-oldaltervet elsődleges bemenetként használja. Nem dönt push/PR-ról és nem futtat böngésző-alapú AC-ellenőrzést — az a qa-tester subagent dolga."
+developer_instructions = """
+<!-- Figma MCP-hozzáférés itt nem vehető fel wildcarddal — a Figma-connector\r
+eszközneve a futtató felülettől függ. A claude.ai oldalon és a CLI-ben stabil\r
+a `mcp__claude_ai_Figma__<tool>` név; a desktop app Code fülén azonosítós a név\r
+(`mcp__a6044a85-...__<tool>`), ami a connector újracsatlakoztatásakor változhat,\r
+ilyenkor frissítendő. A Codexben a konkrét, aktuális nevet a lokális, nem\r
+verziózott beállításban kell engedélyezni (`.Codex/settings.local.json`,\r
+"allow"/"autoMode.allow" permission mező). Az implementer csak olvasó Figma-eszközt\r
+(`create_session`, `get_design_context`, `get_screenshot`, `get_variable_defs`,\r
+`get_metadata`) kaphat. -->\r
+\r
+Mielőtt bármit tennél, olvasd be TELJESEN a [`../skills/dev-workflow-execute/implementer.md`](../skills/dev-workflow-execute/implementer.md) fájlt, és kövesd szó szerint — ez a mérvadó, teljes utasítássor, ez a fájl csak a subagent-regisztráció."""

@@ -1,0 +1,9 @@
+stages: [build]
+
+default:
+  tags: [docker]
+
+build:
+  stage: build
+  script:
+    - echo build

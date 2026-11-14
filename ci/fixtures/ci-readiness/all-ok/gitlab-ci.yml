@@ -1,0 +1,12 @@
+stages: [build]
+
+default:
+  tags: [docker]
+
+build:
+  stage: build
+  script:
+    - echo build
+
+include:
+  - template: Security/SAST.gitlab-ci.yml

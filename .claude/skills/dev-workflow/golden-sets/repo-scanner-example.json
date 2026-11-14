@@ -1,0 +1,23 @@
+{
+  "_comment": "SÉMA-PÉLDA, NEM ÉLES GOLDEN SET (COCALC-280 / LOCAL-3). A valós brief + várt leletek felvétele későbbi, nagyobb repót igénylő munka — lásd golden-sets/README.md. Az alábbi utak/szimbólumok illusztratívak.",
+  "brief": "A CSV-import ismerje fel automatikusan a pontosvessző elválasztót a vessző mellett, és a hibás sorokat gyűjtse külön hiba-riportba a feltöltés megszakítása nélkül.",
+  "repo": "wordcloud",
+  "ref": "példa — töltsd ki a golden set rögzítésekori commit SHA-jával",
+  "expectedFindings": [
+    {
+      "path": "frontend/src/app/parser/csv-parser.service.ts",
+      "symbol": "CsvParserService.parse",
+      "reason": "itt van a jelenlegi elválasztó-kezelés, ide kerül az auto-detekció"
+    },
+    {
+      "path": "frontend/src/app/parser/csv-parser.service.spec.ts",
+      "symbol": "CsvParserService parse — describe blokk",
+      "reason": "a meglévő parser-tesztek helye, ide jönnek az új elválasztó/hiba-eset esetek"
+    },
+    {
+      "path": "frontend/src/app/upload/upload.component.ts",
+      "symbol": "UploadComponent.onFileSelected",
+      "reason": "a feltöltési flow belépési pontja, itt kell a hiba-riport megjelenítése"
+    }
+  ]
+}

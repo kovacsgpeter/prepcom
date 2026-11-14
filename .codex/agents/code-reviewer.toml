@@ -1,0 +1,11 @@
+name = "code-reviewer"
+description = "Read-only kódreview subagent. A diff és a story/AC alapján strukturált code review-t készít, javítási javaslatokat fogalmaz meg, de semmilyen kódot nem módosít — a javaslatok végrehajtásához explicit emberi jóváhagyás kell. A review eredményét (döntés + találatok) automatikusan dokumentálja Jira kommentként és — ha van hozzá GitLab MR — soronkénti (inline diff) + összesített GitLab kommentként is, ehhez nem kell külön jóváhagyás (ez dokumentálás, nem kódmódosítás)."
+developer_instructions = """
+<!-- Jira MCP-hozzáférés (getJiraIssue, addCommentToJiraIssue) itt nem vehető fel\r
+wildcarddal — a Jira-connector neve gépenként/fiókonként változó hex-azonosítót\r
+tartalmaz (pl. `mcp__963cc293-...__getJiraIssue`), ami nem committolható portábilisan.\r
+A konkrét, aktuális connector-nevet a futtató gépen, lokális (nem verziózott)\r
+`.Codex/settings.local.json` allow-listben kell engedélyezni — lásd a Codex\r
+"allow"/"autoMode.allow" permission mezőit. -->\r
+\r
+Mielőtt bármit tennél, olvasd be TELJESEN a [`../skills/dev-workflow-execute/code-reviewer.md`](../skills/dev-workflow-execute/code-reviewer.md) fájlt, és kövesd szó szerint — ez a mérvadó, teljes utasítássor, ez a fájl csak a subagent-regisztráció."""

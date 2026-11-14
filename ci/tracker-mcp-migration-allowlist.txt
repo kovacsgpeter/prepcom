@@ -1,0 +1,16 @@
+# tracker-MCP migrációs allowlist — COCALC-260
+#
+# A `ci/verify-tracker-mcp-abstraction.sh` őr ezeket a fájlokat MÉG elnézi: nevezhetnek
+# meg közvetlen Jira/Atlassian MCP-eszközt, mert a tracker-adapter absztrakt művelet-
+# neveire való átállításuk még folyamatban van. Ahogy egy fájl átáll, a sora KIKERÜL
+# innen. A COCALC-260 zárásakor ez a lista (a `.claude/` fára nézve) ÜRES.
+#
+# Formátum: egy fájl-suffix per sor (a repo-gyökérhez képesti út vége), `#`-komment OK.
+# Az ÁLLANDÓ kivételek (tracker-adapter.md, config.md, history.md, README.md,
+# jira-automation-setup.md, config.template.md) NEM ide tartoznak — azok a szkriptbe
+# vannak égetve (PERMANENT_ALLOW_SUFFIXES).
+#
+# (Üres — a COCALC-260 minden `.claude/` hívó skillt átállított a tracker-adapter
+#  absztrakt művelet-neveire. A `.agents/` Codex-port átállítását és a hozzá tartozó
+#  átmeneti migrációs bejegyzéseket a COCALC-323 követő ticket viszi, amikor a szkript
+#  `.agents/skills` szkennelését is élesíti.)

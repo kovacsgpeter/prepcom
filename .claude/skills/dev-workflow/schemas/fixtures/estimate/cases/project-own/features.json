@@ -1,0 +1,38 @@
+{
+  "complexity": "M",
+  "ac_count": 8,
+  "design": false,
+  "plan_steps": 14,
+  "subtasks": [
+    {
+      "id": "T-1",
+      "type": "impl",
+      "executor": "local",
+      "ac_count": 2
+    },
+    {
+      "id": "T-2",
+      "type": "impl",
+      "executor": "local",
+      "ac_count": 2
+    },
+    {
+      "id": "T-3",
+      "type": "impl",
+      "executor": "local",
+      "ac_count": 2
+    },
+    {
+      "id": "T-4",
+      "type": "impl",
+      "executor": "local",
+      "ac_count": 2
+    },
+    {
+      "id": "T-5",
+      "type": "impl",
+      "executor": "claude",
+      "ac_count": 2
+    }
+  ]
+}

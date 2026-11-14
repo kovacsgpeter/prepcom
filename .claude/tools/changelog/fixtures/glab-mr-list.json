@@ -1,0 +1,65 @@
+[
+  {
+    "iid": 101,
+    "source_branch": "feature/COCALC-101_uj_export_gomb",
+    "target_branch": "master",
+    "title": "Új export gomb a fejlécben",
+    "web_url": "https://gitlab.example.com/group/wordcloud/-/merge_requests/101",
+    "merge_commit_sha": "sha_feat",
+    "state": "merged"
+  },
+  {
+    "iid": 102,
+    "source_branch": "fix/COCALC-102_null_pointer_a_feltoltesnel",
+    "target_branch": "master",
+    "title": "NullPointer javítás a feltöltésnél",
+    "web_url": "https://gitlab.example.com/group/wordcloud/-/merge_requests/102",
+    "merge_commit_sha": "sha_fix",
+    "state": "merged"
+  },
+  {
+    "iid": 103,
+    "source_branch": "build/COCALC-103_ci_cache_kulcs",
+    "target_branch": "master",
+    "title": "CI cache kulcs finomhangolás",
+    "web_url": "https://gitlab.example.com/group/wordcloud/-/merge_requests/103",
+    "merge_commit_sha": "sha_build",
+    "state": "merged"
+  },
+  {
+    "iid": 104,
+    "source_branch": "refactoring/COCALC-104_service_bontas",
+    "target_branch": "master",
+    "title": "Service réteg bontása",
+    "web_url": "https://gitlab.example.com/group/wordcloud/-/merge_requests/104",
+    "merge_commit_sha": "sha_refactoring",
+    "state": "merged"
+  },
+  {
+    "iid": 105,
+    "source_branch": "chore/COCALC-105_dependency_bump",
+    "target_branch": "master",
+    "title": "Függőség-frissítés",
+    "web_url": "https://gitlab.example.com/group/wordcloud/-/merge_requests/105",
+    "merge_commit_sha": "sha_chore",
+    "state": "merged"
+  },
+  {
+    "iid": 106,
+    "source_branch": "hotfix-no-ticket",
+    "target_branch": "master",
+    "title": "Gyors javítás ticket nélkül",
+    "web_url": "https://gitlab.example.com/group/wordcloud/-/merge_requests/106",
+    "merge_commit_sha": "sha_egyeb",
+    "state": "merged"
+  },
+  {
+    "iid": 999,
+    "source_branch": "feature/COCALC-999_nem_ebben_a_tartomanyban",
+    "target_branch": "master",
+    "title": "Range-en kívüli MR",
+    "web_url": "https://gitlab.example.com/group/wordcloud/-/merge_requests/999",
+    "merge_commit_sha": "sha_OUTSIDE_RANGE",
+    "state": "merged"
+  }
+]

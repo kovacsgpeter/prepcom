@@ -1,0 +1,362 @@
+{
+  "epic": "ORD-60",
+  "stories": [
+    {
+      "schema": "estimate/v1",
+      "story": "ORD-61",
+      "basis": "history",
+      "confidence": "normal",
+      "sample": {
+        "scope": "project",
+        "project": "ORD",
+        "n": 4,
+        "n_project": 4,
+        "k": 4,
+        "level": "strict",
+        "sample_id": "ORD:n4"
+      },
+      "target": {
+        "complexity": "M",
+        "plan_steps": 10,
+        "local_share": 0.5
+      },
+      "p50": {
+        "active_s": 2070,
+        "ci_s": 460,
+        "claude_s": 2128,
+        "cost_usd": 2.75,
+        "local_s": 863,
+        "model_cost:test-haiku": 0.55,
+        "model_cost:test-sonnet": 2.2,
+        "model_tokens:test-haiku": 330000,
+        "model_tokens:test-sonnet": 660000,
+        "phase_cost:implement": 1.925,
+        "phase_cost:plan": 0.825,
+        "phase_tokens:implement": 693000,
+        "phase_tokens:plan": 297000,
+        "tokens": 990000,
+        "wall_s": 3450
+      },
+      "p80": {
+        "active_s": 2232,
+        "ci_s": 496,
+        "claude_s": 2294,
+        "cost_usd": 3.2,
+        "local_s": 930,
+        "model_cost:test-haiku": 0.64,
+        "model_cost:test-sonnet": 2.56,
+        "model_tokens:test-haiku": 384000,
+        "model_tokens:test-sonnet": 768000,
+        "phase_cost:implement": 2.24,
+        "phase_cost:plan": 0.96,
+        "phase_tokens:implement": 806400,
+        "phase_tokens:plan": 345600,
+        "tokens": 1152000,
+        "wall_s": 3720
+      },
+      "raw": {
+        "p50": {
+          "active_s": 2070,
+          "ci_s": 460,
+          "claude_s": 2128,
+          "cost_usd": 2.75,
+          "local_s": 863,
+          "model_cost:test-haiku": 0.55,
+          "model_cost:test-sonnet": 2.2,
+          "model_tokens:test-haiku": 330000,
+          "model_tokens:test-sonnet": 660000,
+          "phase_cost:implement": 1.925,
+          "phase_cost:plan": 0.825,
+          "phase_tokens:implement": 693000,
+          "phase_tokens:plan": 297000,
+          "tokens": 990000,
+          "wall_s": 3450
+        },
+        "p80": {
+          "active_s": 2232,
+          "ci_s": 496,
+          "claude_s": 2294,
+          "cost_usd": 3.2,
+          "local_s": 930,
+          "model_cost:test-haiku": 0.64,
+          "model_cost:test-sonnet": 2.56,
+          "model_tokens:test-haiku": 384000,
+          "model_tokens:test-sonnet": 768000,
+          "phase_cost:implement": 2.24,
+          "phase_cost:plan": 0.96,
+          "phase_tokens:implement": 806400,
+          "phase_tokens:plan": 345600,
+          "tokens": 1152000,
+          "wall_s": 3720
+        }
+      },
+      "calibration": {
+        "applied": false,
+        "n": 0,
+        "factors": null
+      },
+      "hit_rate": {},
+      "risks": [],
+      "rounds_fix": {
+        "min": 0,
+        "max": 0
+      }
+    },
+    {
+      "schema": "estimate/v1",
+      "story": "ORD-62",
+      "basis": "history",
+      "confidence": "normal",
+      "sample": {
+        "scope": "project",
+        "project": "ORD",
+        "n": 4,
+        "n_project": 4,
+        "k": 4,
+        "level": "strict",
+        "sample_id": "ORD:n4"
+      },
+      "target": {
+        "complexity": "M",
+        "plan_steps": 20,
+        "local_share": 0.5
+      },
+      "p50": {
+        "active_s": 4140,
+        "ci_s": 920,
+        "claude_s": 4255,
+        "cost_usd": 5.5,
+        "local_s": 1725,
+        "model_cost:test-haiku": 1.1,
+        "model_cost:test-sonnet": 4.4,
+        "model_tokens:test-haiku": 660000,
+        "model_tokens:test-sonnet": 1320000,
+        "phase_cost:implement": 3.85,
+        "phase_cost:plan": 1.65,
+        "phase_tokens:implement": 1386000,
+        "phase_tokens:plan": 594000,
+        "tokens": 1980000,
+        "wall_s": 6900
+      },
+      "p80": {
+        "active_s": 4464,
+        "ci_s": 992,
+        "claude_s": 4588,
+        "cost_usd": 6.4,
+        "local_s": 1860,
+        "model_cost:test-haiku": 1.28,
+        "model_cost:test-sonnet": 5.12,
+        "model_tokens:test-haiku": 768000,
+        "model_tokens:test-sonnet": 1536000,
+        "phase_cost:implement": 4.48,
+        "phase_cost:plan": 1.92,
+        "phase_tokens:implement": 1612800,
+        "phase_tokens:plan": 691200,
+        "tokens": 2304000,
+        "wall_s": 7440
+      },
+      "raw": {
+        "p50": {
+          "active_s": 4140,
+          "ci_s": 920,
+          "claude_s": 4255,
+          "cost_usd": 5.5,
+          "local_s": 1725,
+          "model_cost:test-haiku": 1.1,
+          "model_cost:test-sonnet": 4.4,
+          "model_tokens:test-haiku": 660000,
+          "model_tokens:test-sonnet": 1320000,
+          "phase_cost:implement": 3.85,
+          "phase_cost:plan": 1.65,
+          "phase_tokens:implement": 1386000,
+          "phase_tokens:plan": 594000,
+          "tokens": 1980000,
+          "wall_s": 6900
+        },
+        "p80": {
+          "active_s": 4464,
+          "ci_s": 992,
+          "claude_s": 4588,
+          "cost_usd": 6.4,
+          "local_s": 1860,
+          "model_cost:test-haiku": 1.28,
+          "model_cost:test-sonnet": 5.12,
+          "model_tokens:test-haiku": 768000,
+          "model_tokens:test-sonnet": 1536000,
+          "phase_cost:implement": 4.48,
+          "phase_cost:plan": 1.92,
+          "phase_tokens:implement": 1612800,
+          "phase_tokens:plan": 691200,
+          "tokens": 2304000,
+          "wall_s": 7440
+        }
+      },
+      "calibration": {
+        "applied": false,
+        "n": 0,
+        "factors": null
+      },
+      "hit_rate": {},
+      "risks": [],
+      "rounds_fix": {
+        "min": 0,
+        "max": 0
+      }
+    },
+    {
+      "schema": "estimate/v1",
+      "story": "ORD-63",
+      "basis": "history",
+      "confidence": "normal",
+      "sample": {
+        "scope": "project",
+        "project": "ORD",
+        "n": 4,
+        "n_project": 4,
+        "k": 4,
+        "level": "strict",
+        "sample_id": "ORD:n4"
+      },
+      "target": {
+        "complexity": "M",
+        "plan_steps": 5,
+        "local_share": 0.5
+      },
+      "p50": {
+        "active_s": 1035,
+        "ci_s": 230,
+        "claude_s": 1064,
+        "cost_usd": 1.375,
+        "local_s": 431,
+        "model_cost:test-haiku": 0.275,
+        "model_cost:test-sonnet": 1.1,
+        "model_tokens:test-haiku": 165000,
+        "model_tokens:test-sonnet": 330000,
+        "phase_cost:implement": 0.9625,
+        "phase_cost:plan": 0.4125,
+        "phase_tokens:implement": 346500,
+        "phase_tokens:plan": 148500,
+        "tokens": 495000,
+        "wall_s": 1725
+      },
+      "p80": {
+        "active_s": 1116,
+        "ci_s": 248,
+        "claude_s": 1147,
+        "cost_usd": 1.6,
+        "local_s": 465,
+        "model_cost:test-haiku": 0.32,
+        "model_cost:test-sonnet": 1.28,
+        "model_tokens:test-haiku": 192000,
+        "model_tokens:test-sonnet": 384000,
+        "phase_cost:implement": 1.12,
+        "phase_cost:plan": 0.48,
+        "phase_tokens:implement": 403200,
+        "phase_tokens:plan": 172800,
+        "tokens": 576000,
+        "wall_s": 1860
+      },
+      "raw": {
+        "p50": {
+          "active_s": 1035,
+          "ci_s": 230,
+          "claude_s": 1064,
+          "cost_usd": 1.375,
+          "local_s": 431,
+          "model_cost:test-haiku": 0.275,
+          "model_cost:test-sonnet": 1.1,
+          "model_tokens:test-haiku": 165000,
+          "model_tokens:test-sonnet": 330000,
+          "phase_cost:implement": 0.9625,
+          "phase_cost:plan": 0.4125,
+          "phase_tokens:implement": 346500,
+          "phase_tokens:plan": 148500,
+          "tokens": 495000,
+          "wall_s": 1725
+        },
+        "p80": {
+          "active_s": 1116,
+          "ci_s": 248,
+          "claude_s": 1147,
+          "cost_usd": 1.6,
+          "local_s": 465,
+          "model_cost:test-haiku": 0.32,
+          "model_cost:test-sonnet": 1.28,
+          "model_tokens:test-haiku": 192000,
+          "model_tokens:test-sonnet": 384000,
+          "phase_cost:implement": 1.12,
+          "phase_cost:plan": 0.48,
+          "phase_tokens:implement": 403200,
+          "phase_tokens:plan": 172800,
+          "tokens": 576000,
+          "wall_s": 1860
+        }
+      },
+      "calibration": {
+        "applied": false,
+        "n": 0,
+        "factors": null
+      },
+      "hit_rate": {},
+      "risks": [],
+      "rounds_fix": {
+        "min": 0,
+        "max": 0
+      }
+    }
+  ],
+  "overhead": {
+    "n": 2,
+    "scope": "project",
+    "p50": {
+      "cost_usd": 2.25,
+      "model_cost:test-sonnet": 4.5,
+      "model_tokens:test-sonnet": 1350000,
+      "tokens": 1350000,
+      "wall_s": 1350
+    },
+    "p80": {
+      "cost_usd": 2.7,
+      "model_cost:test-sonnet": 5.4,
+      "model_tokens:test-sonnet": 1620000,
+      "tokens": 1620000,
+      "wall_s": 1620
+    }
+  },
+  "total": {
+    "p50": {
+      "active_s": 7245,
+      "ci_s": 1610,
+      "claude_s": 7447,
+      "cost_usd": 11.875,
+      "local_s": 3019,
+      "model_cost:test-haiku": 1.925,
+      "model_cost:test-sonnet": 12.2,
+      "model_tokens:test-haiku": 1155000,
+      "model_tokens:test-sonnet": 3660000,
+      "phase_cost:implement": 6.7375,
+      "phase_cost:plan": 2.8875,
+      "phase_tokens:implement": 2425500,
+      "phase_tokens:plan": 1039500,
+      "tokens": 4815000,
+      "wall_s": 13425
+    },
+    "p80": {
+      "active_s": 7812,
+      "ci_s": 1736,
+      "claude_s": 8029,
+      "cost_usd": 13.9,
+      "local_s": 3255,
+      "model_cost:test-haiku": 2.24,
+      "model_cost:test-sonnet": 14.36,
+      "model_tokens:test-haiku": 1344000,
+      "model_tokens:test-sonnet": 4308000,
+      "phase_cost:implement": 7.84,
+      "phase_cost:plan": 3.36,
+      "phase_tokens:implement": 2822400,
+      "phase_tokens:plan": 1209600,
+      "tokens": 5652000,
+      "wall_s": 14640
+    }
+  }
+}

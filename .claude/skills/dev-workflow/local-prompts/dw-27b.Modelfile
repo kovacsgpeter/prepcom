@@ -1,0 +1,8 @@
+# A helyi modell (Ollama) általános, fázis-független Modelfile-ja (LOCAL-5).
+# A kimeneti formát a local-prompts/<fázis>.md sablon adja — a system prompt ezért általános.
+# Létrehozás (Ollama-s gépen, pl. WSL-ben):  ollama create dw-27b -f dw-27b.Modelfile
+# Majd:  LOCAL_MODEL_NAME=dw-27b  (pl. .claude/settings.local.json env blokkja)
+FROM qwen3.6:27b
+PARAMETER num_ctx 32768
+PARAMETER temperature 0.2
+SYSTEM """You are one step of a software development workflow. Follow the instructions and the exact output format given in the user message. Respond with exactly one raw JSON object: no markdown code fences, no text before or after the JSON."""

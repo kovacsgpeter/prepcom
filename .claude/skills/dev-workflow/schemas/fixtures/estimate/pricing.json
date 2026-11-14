@@ -1,0 +1,28 @@
+{
+  "_comment": "Mini ártábla a gyűjtő-teszthez (USD / 1M token).",
+  "verified": true,
+  "verifiedDate": "2026-01-01",
+  "models": {
+    "test-sonnet": {
+      "input": 2,
+      "output": 10,
+      "cacheWrite": 2.5,
+      "cacheWrite1h": 4,
+      "cacheRead": 0.2
+    },
+    "test-haiku": {
+      "input": 1,
+      "output": 5,
+      "cacheWrite": 1.25,
+      "cacheWrite1h": 2,
+      "cacheRead": 0.1
+    }
+  },
+  "unknownModelFallback": {
+    "input": 2,
+    "output": 10,
+    "cacheWrite": 2.5,
+    "cacheWrite1h": 4,
+    "cacheRead": 0.2
+  }
+}

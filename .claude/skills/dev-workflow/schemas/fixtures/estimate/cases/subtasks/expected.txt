@@ -1,0 +1,11 @@
+Becslés ORD-700 (M, 10 lépés, 2/3 helyi sub-task) — n=4 hasonló (k=4), ujjlenyomat: szigorú
+minta: ORD n=4
+            P50       P80
+Claude $    3.50      4.40  (test-sonnet 2.80 / test-haiku 0.70)
+Tokenek     1.3M      1.6M
+Falióra     1 ó 5 p   1 ó 14 p  (helyi LLM 16 p · Claude 40 p · CI 9 p · javítókör 0–0)
+Aktív idő   39 p      44 p
+Sub-task bontás — FIGYELEM: alacsony megbízhatóság (heurisztikus felosztás)
+  ORD-701 (backend, local) 19%: $ 0.67 / 0.84 · 240k / 302k · 12 p / 14 p · helyi 5 p / 6 p
+  ORD-702 (frontend, claude) 43%: $ 1.50 / 1.89 · 540k / 679k · 28 p / 32 p
+  ORD-703 (tests, local) 38%: $ 1.33 / 1.68 · 480k / 603k · 25 p / 28 p · helyi 11 p / 12 p

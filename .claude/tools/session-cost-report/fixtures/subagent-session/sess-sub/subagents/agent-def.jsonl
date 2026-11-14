@@ -1,0 +1,1 @@
+{"type":"assistant","timestamp":"2026-10-26T10:03:00.000Z","agentId":"def","requestId":"rq_d1","message":{"model":"claude-sonnet-5-5","usage":{"input_tokens":300,"output_tokens":30,"cache_creation_input_tokens":0,"cache_read_input_tokens":0},"content":[{"type":"text","text":"meta nelkul"}],"id":"msg_d1"}}

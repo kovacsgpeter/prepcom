@@ -1,0 +1,33 @@
+Becslés ORD-61 (M, 10 lépés) — n=4 hasonló (k=4), ujjlenyomat: szigorú
+minta: ORD n=4
+            P50       P80
+Claude $    2.75      3.20  (test-sonnet 2.20 / test-haiku 0.55)
+Tokenek     990k      1.2M
+Falióra     58 p      1 ó 2 p  (helyi LLM 14 p · Claude 35 p · CI 8 p · javítókör 0–0)
+Aktív idő   35 p      37 p
+
+Becslés ORD-62 (M, 20 lépés) — n=4 hasonló (k=4), ujjlenyomat: szigorú
+minta: ORD n=4
+            P50       P80
+Claude $    5.50      6.40  (test-sonnet 4.40 / test-haiku 1.10)
+Tokenek     2.0M      2.3M
+Falióra     1 ó 55 p  2 ó 4 p  (helyi LLM 29 p · Claude 1 ó 11 p · CI 15 p · javítókör 0–0)
+Aktív idő   1 ó 9 p   1 ó 14 p
+
+Becslés ORD-63 (M, 5 lépés) — n=4 hasonló (k=4), ujjlenyomat: szigorú
+minta: ORD n=4
+            P50       P80
+Claude $    1.38      1.60  (test-sonnet 1.10 / test-haiku 0.28)
+Tokenek     495k      576k
+Falióra     29 p      31 p  (helyi LLM 7 p · Claude 18 p · CI 4 p · javítókör 0–0)
+Aktív idő   17 p      19 p
+
+Epic ORD-60: 3 story
+epic_overhead: n=2 (saját projekt), P50 2.25 $ / 23 p, P80 2.70 $ / 27 p
+Összesen (storyk és epic_overhead):
+            P50       P80
+Claude $    11.88     13.90  (test-sonnet 12.20 / test-haiku 1.93)
+Tokenek     4.8M      5.7M
+Falióra     3 ó 44 p  4 ó 4 p  (helyi LLM 50 p · Claude 2 ó 4 p · CI 27 p)
+Aktív idő   2 ó 1 p   2 ó 10 p
+Megjegyzés: a P80-ak összege konzervatív; a hullámok összeadva, párhuzamosság nincs modellezve

@@ -1,0 +1,8 @@
+Becslés ORD-300 (M, 12 lépés, 2/4 helyi sub-task) — heurisztikus becslés, n=2 korábbi story
+minta: heurisztika n=2
+FIGYELEM: alacsony megbízhatóság (heurisztikus becslés)
+            P50       P80
+Claude $    3.40      5.10  (test-sonnet 2.72 / test-haiku 0.68)
+Tokenek     1.2M      1.8M
+Falióra     1 ó 8 p   1 ó 42 p  (helyi LLM 17 p · Claude 42 p · CI 9 p · javítókör 0–0)
+Aktív idő   41 p      1 ó 1 p

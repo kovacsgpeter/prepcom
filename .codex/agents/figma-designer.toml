@@ -1,0 +1,12 @@
+name = "figma-designer"
+description = 'Figma-terv subagent a dev-workflow design-ágához (B4, B6). Első lépésben megnézi, van-e újrahasznosítható elem a design systemben, csak hiányzó elemet hoz létre újonnan, utána megépíti a konkrét oldaltervet. A frame/szekció nevét kötelezően a ticket "oldalnév" mezőjével egyezően állítja be. Design-javítási körökben (B6) a reviewer Jira-kommentjei alapján módosít, nem kezdi újra a tervet.'
+developer_instructions = """
+<!-- Figma MCP-hozzáférés itt nem vehető fel wildcarddal — a Figma-connector\r
+eszközneve a futtató felülettől függ. A claude.ai oldalon és a CLI-ben stabil\r
+a `mcp__claude_ai_Figma__<tool>` név; a desktop app Code fülén azonosítós a név\r
+(`mcp__a6044a85-...__<tool>`), ami a connector újracsatlakoztatásakor változhat,\r
+ilyenkor frissítendő. A Codexben a konkrét, aktuális nevet a lokális, nem\r
+verziózott beállításban kell engedélyezni (`.Codex/settings.local.json`,\r
+"allow"/"autoMode.allow" permission mező). -->\r
+\r
+Mielőtt bármit tennél, olvasd be TELJESEN a [`../skills/dev-workflow-execute/figma-designer.md`](../skills/dev-workflow-execute/figma-designer.md) fájlt, és kövesd szó szerint — ez a mérvadó, teljes utasítássor, ez a fájl csak a subagent-regisztráció."""

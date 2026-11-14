@@ -1,0 +1,108 @@
+{
+  "schema": "estimate/v1",
+  "story": "ORD-400",
+  "basis": "history",
+  "confidence": "normal",
+  "sample": {
+    "scope": "project",
+    "project": "ORD",
+    "n": 5,
+    "n_project": 5,
+    "k": 5,
+    "level": "loose",
+    "sample_id": "ORD:n5"
+  },
+  "target": {
+    "complexity": "M",
+    "plan_steps": 10,
+    "local_share": 0.5
+  },
+  "p50": {
+    "active_s": 2160,
+    "ci_s": 480,
+    "claude_s": 2220,
+    "cost_usd": 2.4,
+    "local_s": 900,
+    "model_cost:test-haiku": 0.48,
+    "model_cost:test-sonnet": 1.92,
+    "model_tokens:test-haiku": 288000,
+    "model_tokens:test-sonnet": 576000,
+    "phase_cost:implement": 1.68,
+    "phase_cost:plan": 0.72,
+    "phase_tokens:implement": 604800,
+    "phase_tokens:plan": 259200,
+    "tokens": 864000,
+    "wall_s": 3600
+  },
+  "p80": {
+    "active_s": 2196,
+    "ci_s": 488,
+    "claude_s": 2257,
+    "cost_usd": 2.64,
+    "local_s": 915,
+    "model_cost:test-haiku": 0.528,
+    "model_cost:test-sonnet": 2.112,
+    "model_tokens:test-haiku": 316800,
+    "model_tokens:test-sonnet": 633600,
+    "phase_cost:implement": 1.848,
+    "phase_cost:plan": 0.792,
+    "phase_tokens:implement": 665280,
+    "phase_tokens:plan": 285120,
+    "tokens": 950400,
+    "wall_s": 3660
+  },
+  "raw": {
+    "p50": {
+      "active_s": 2160,
+      "ci_s": 480,
+      "claude_s": 2220,
+      "cost_usd": 2.4,
+      "local_s": 900,
+      "model_cost:test-haiku": 0.48,
+      "model_cost:test-sonnet": 1.92,
+      "model_tokens:test-haiku": 288000,
+      "model_tokens:test-sonnet": 576000,
+      "phase_cost:implement": 1.68,
+      "phase_cost:plan": 0.72,
+      "phase_tokens:implement": 604800,
+      "phase_tokens:plan": 259200,
+      "tokens": 864000,
+      "wall_s": 3600
+    },
+    "p80": {
+      "active_s": 2196,
+      "ci_s": 488,
+      "claude_s": 2257,
+      "cost_usd": 2.64,
+      "local_s": 915,
+      "model_cost:test-haiku": 0.528,
+      "model_cost:test-sonnet": 2.112,
+      "model_tokens:test-haiku": 316800,
+      "model_tokens:test-sonnet": 633600,
+      "phase_cost:implement": 1.848,
+      "phase_cost:plan": 0.792,
+      "phase_tokens:implement": 665280,
+      "phase_tokens:plan": 285120,
+      "tokens": 950400,
+      "wall_s": 3660
+    }
+  },
+  "calibration": {
+    "applied": false,
+    "n": 0,
+    "factors": null
+  },
+  "hit_rate": {},
+  "risks": [
+    {
+      "code": "breaker_open",
+      "count": 1,
+      "total": 6,
+      "extra_wall_s": 2400
+    }
+  ],
+  "rounds_fix": {
+    "min": 0,
+    "max": 2
+  }
+}

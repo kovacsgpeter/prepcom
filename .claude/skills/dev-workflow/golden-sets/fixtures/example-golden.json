@@ -1,0 +1,9 @@
+{
+  "_comment": "COCALC-280 (LOCAL-3) determinisztikus önteszt-fixture. A path-ok a repo-gyökér biztosan létező fájljaira mutatnak, hogy a compare-scan-quality.sh test -f ellenőrzése kiszámítható legyen a ci/verify-offload-measurements.sh-ban.",
+  "brief": "Önteszt golden set — dokumentum-fájlok a repo gyökerében.",
+  "expectedFindings": [
+    { "path": "CLAUDE.md", "symbol": "(dokumentum)", "reason": "önteszt fixture" },
+    { "path": "README.md", "symbol": "(dokumentum)", "reason": "önteszt fixture" },
+    { "path": "AGENTS.md", "symbol": "(dokumentum)", "reason": "önteszt fixture" }
+  ]
+}

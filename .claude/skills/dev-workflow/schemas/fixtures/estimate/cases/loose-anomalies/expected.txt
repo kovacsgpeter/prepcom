@@ -1,0 +1,8 @@
+Becslés ORD-400 (M, 10 lépés, 2/4 helyi sub-task) — n=5 hasonló (k=5), ujjlenyomat: laza
+minta: ORD n=5
+            P50       P80
+Claude $    2.40      2.64  (test-sonnet 1.92 / test-haiku 0.48)
+Tokenek     864k      950k
+Falióra     1 ó 0 p   1 ó 1 p  (helyi LLM 15 p · Claude 37 p · CI 8 p · javítókör 0–2)
+Aktív idő   36 p      37 p
+Kockázat: 1/6 hasonló futásban breaker_open (+40 p)

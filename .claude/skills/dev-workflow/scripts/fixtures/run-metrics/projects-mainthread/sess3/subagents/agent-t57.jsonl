@@ -1,0 +1,1 @@
+{"type":"assistant","timestamp":"2026-02-01T10:06:00.000Z","requestId":"req_mt7","message":{"id":"msg_mt7","model":"test-sonnet","role":"assistant","content":[],"usage":{"input_tokens":3000,"output_tokens":300,"cache_creation_input_tokens":0,"cache_read_input_tokens":0}}}

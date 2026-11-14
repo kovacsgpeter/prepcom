@@ -1,0 +1,11 @@
+{
+  "$schemaVersion": 1,
+  "$description": "LOCAL-5 -- a call-local-model.sh --schema kapcsolojanak erteke a 'repo-scanner' fazis helyi (local) vegrehajtasakor. A sajat, leegyszerusitett sema-konvenciot koveti (lasd call-local-model.sh fejlec-doksijat) -- NEM teljes JSON Schema. A 'findings[].path' tombelem-utvonal minden elemenek letezo, a repon beluli fajlra kell mutatnia (az adapter ellenorzi); a 'quote' egyezeset es a sorszamot a hivo fo szal ellenorzi (lasd dev-workflow-intake/SKILL.md 'Lokal repo-scanner'). Verziozott fajl: ha a szerzodes valtozik, uj '...v2...' fajlt kell letrehozni, ezt nem szabad hely-ben modositani. Egy lelet: {path: string, line: number, quote: string, why: string}.",
+  "required": ["findings", "searched", "notFound"],
+  "properties": {
+    "findings": { "type": "array" },
+    "searched": { "type": "array" },
+    "notFound": { "type": "array" }
+  },
+  "x-file-path-fields": ["findings[].path"]
+}

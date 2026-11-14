@@ -1,0 +1,16 @@
+[
+  "--story",
+  "ORD-500",
+  "--features-file",
+  "./features.json",
+  "--store",
+  "./store.jsonl",
+  "--fingerprint-file",
+  "@F/fingerprint.json",
+  "--pricing",
+  "@F/pricing.json",
+  "--min-samples",
+  "3",
+  "--exclude-anomalies",
+  "on"
+]

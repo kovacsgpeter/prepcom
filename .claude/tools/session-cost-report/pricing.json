@@ -1,0 +1,146 @@
+{
+  "_comment": "USD ár / 1 millió token, modellenként, az Anthropic első féltől származó API-árai (globális routing; az inference_geo US-only 1.1x szorzója nincs benne). cacheWrite = 5 perces cache-írás, cacheWrite1h = 1 órás cache-írás (ha hiányzik, a cacheWrite érvényes). longContext: a promptméret szerinti magasabb ár (a prompt = input + cache-írás + cache-olvasás egy kérésben); csak a Claude Haiku 5.5-nél van. A modell-kulcsok a session JSONL 'model' mezőjével egyeznek. A 'verified' akkor true, ha az értékeket a 'source' oldalról, a 'verifiedDate' napján ellenőrizték.",
+  "verified": true,
+  "verifiedDate": "2026-10-27",
+  "source": "https://platform.claude.com/docs/en/about-claude/pricing",
+  "models": {
+    "claude-fable-5-1": {
+      "input": 10.0,
+      "output": 50.0,
+      "cacheWrite": 12.5,
+      "cacheWrite1h": 20.0,
+      "cacheRead": 0.25
+    },
+    "claude-fable-5": {
+      "input": 10.0,
+      "output": 50.0,
+      "cacheWrite": 12.5,
+      "cacheWrite1h": 20.0,
+      "cacheRead": 1.0
+    },
+    "claude-opus-5-5": {
+      "input": 4.0,
+      "output": 20.0,
+      "cacheWrite": 5.0,
+      "cacheWrite1h": 8.0,
+      "cacheRead": 0.2
+    },
+    "claude-opus-5": {
+      "input": 5.0,
+      "output": 25.0,
+      "cacheWrite": 6.25,
+      "cacheWrite1h": 10.0,
+      "cacheRead": 0.5
+    },
+    "claude-opus-4-8": {
+      "input": 5.0,
+      "output": 25.0,
+      "cacheWrite": 6.25,
+      "cacheWrite1h": 10.0,
+      "cacheRead": 0.5
+    },
+    "claude-opus-4-7": {
+      "input": 5.0,
+      "output": 25.0,
+      "cacheWrite": 6.25,
+      "cacheWrite1h": 10.0,
+      "cacheRead": 0.5
+    },
+    "claude-opus-4-6": {
+      "input": 5.0,
+      "output": 25.0,
+      "cacheWrite": 6.25,
+      "cacheWrite1h": 10.0,
+      "cacheRead": 0.5
+    },
+    "claude-sonnet-5-5": {
+      "input": 2.0,
+      "output": 10.0,
+      "cacheWrite": 2.5,
+      "cacheWrite1h": 4.0,
+      "cacheRead": 0.1
+    },
+    "claude-sonnet-5": {
+      "input": 2.0,
+      "output": 10.0,
+      "cacheWrite": 2.5,
+      "cacheWrite1h": 4.0,
+      "cacheRead": 0.2
+    },
+    "claude-sonnet-4-6": {
+      "input": 3.0,
+      "output": 15.0,
+      "cacheWrite": 3.75,
+      "cacheWrite1h": 6.0,
+      "cacheRead": 0.3
+    },
+    "claude-haiku-5-5": {
+      "input": 0.1,
+      "output": 0.5,
+      "cacheWrite": 0.125,
+      "cacheWrite1h": 0.2,
+      "cacheRead": 0.01,
+      "longContext": {
+        "thresholdTokens": 100000,
+        "input": 0.5,
+        "output": 2.5,
+        "cacheWrite": 0.625,
+        "cacheWrite1h": 1.0,
+        "cacheRead": 0.05
+      }
+    },
+    "claude-haiku-4-5": {
+      "input": 1.0,
+      "output": 5.0,
+      "cacheWrite": 1.25,
+      "cacheWrite1h": 2.0,
+      "cacheRead": 0.1
+    },
+    "claude-haiku-4-5-20251001": {
+      "input": 1.0,
+      "output": 5.0,
+      "cacheWrite": 1.25,
+      "cacheWrite1h": 2.0,
+      "cacheRead": 0.1
+    }
+  },
+  "families": {
+    "_comment": "Ha a pontos modell-id nincs a 'models'-ben, a modell-id-ben szereplő családnév (opus/sonnet/haiku/fable) alapján ez az ár érvényes: a család legfrissebb modelljének ára. Csak a tényleg ismeretlen család megy az unknownModelFallback-re, és azt a riport jelzi (unknownModels).",
+    "opus": {
+      "input": 4.0,
+      "output": 20.0,
+      "cacheWrite": 5.0,
+      "cacheWrite1h": 8.0,
+      "cacheRead": 0.2
+    },
+    "sonnet": {
+      "input": 2.0,
+      "output": 10.0,
+      "cacheWrite": 2.5,
+      "cacheWrite1h": 4.0,
+      "cacheRead": 0.1
+    },
+    "haiku": {
+      "input": 0.1,
+      "output": 0.5,
+      "cacheWrite": 0.125,
+      "cacheWrite1h": 0.2,
+      "cacheRead": 0.01
+    },
+    "fable": {
+      "input": 10.0,
+      "output": 50.0,
+      "cacheWrite": 12.5,
+      "cacheWrite1h": 20.0,
+      "cacheRead": 0.25
+    }
+  },
+  "unknownModelFallback": {
+    "_comment": "Ha a transcriptben olyan model-string szerepel, ami nincs a fenti listában, ezt használja a script (a Claude Sonnet 5.5 ára) -- ismeretlen modellnél a riport ezt is jelzi.",
+    "input": 2.0,
+    "output": 10.0,
+    "cacheWrite": 2.5,
+    "cacheWrite1h": 4.0,
+    "cacheRead": 0.1
+  }
+}

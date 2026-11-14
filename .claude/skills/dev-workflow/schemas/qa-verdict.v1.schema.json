@@ -1,0 +1,11 @@
+{
+  "$schemaVersion": 1,
+  "$description": "LOCAL-5 -- a call-local-model.sh --schema kapcsolojanak erteke a 'qa-tester' fazis helyi (local) vegrehajtasakor (A7, fast lokal kapu). A sajat, leegyszerusitett sema-konvenciot koveti -- NEM teljes JSON Schema. A parancsok (build/teszt/lint) kimeneteit a hivo fo szal futtatja es adja a promptba; a modell csak az AC-lefedettseget es a hibaleirast adja. A SZABALY (nem a modell velemenye dont): barmely parancs nem 0 kilepokodja eseten az eredo 'overall' mindig 'fail' -- ezt a hivo fo szal kenyszeriti ki (lasd dev-workflow-execute/SKILL.md A7 'Lokal qa-tester'). Verziozott fajl: ha a szerzodes valtozik, uj '...v2...' fajlt kell letrehozni. Elemek: acResults[] = {ac: string, status: pass|fail|unverified, evidence: string}; bugs[] = {ac: string, severity: blocker|major|minor, expected: string, actual: string}; overall = pass|fail.",
+  "required": ["overall", "acResults", "bugs", "jiraComment"],
+  "properties": {
+    "overall": { "type": "string" },
+    "acResults": { "type": "array" },
+    "bugs": { "type": "array" },
+    "jiraComment": { "type": "string" }
+  }
+}

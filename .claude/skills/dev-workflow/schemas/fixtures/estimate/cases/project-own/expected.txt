@@ -1,0 +1,7 @@
+Becslés ORD-100 (M, 14 lépés, 4/5 helyi sub-task) — n=6 hasonló (k=5), ujjlenyomat: szigorú
+minta: ORD n=6
+            P50       P80
+Claude $    3.00      3.10  (test-sonnet 2.40 / test-haiku 0.60)
+Tokenek     1.1M      1.1M
+Falióra     1 ó 30 p  1 ó 33 p  (helyi LLM 23 p · Claude 56 p · CI 12 p · javítókör 0–0)
+Aktív idő   54 p      56 p

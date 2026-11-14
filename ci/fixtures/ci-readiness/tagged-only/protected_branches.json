@@ -1,0 +1,1 @@
+[{"id":1,"name":"master","allow_force_push":false},{"id":2,"name":"feature/*","allow_force_push":false},{"id":3,"name":"fix/*","allow_force_push":false},{"id":4,"name":"build/*","allow_force_push":false},{"id":5,"name":"refactoring/*","allow_force_push":false},{"id":6,"name":"chore/*","allow_force_push":false}]

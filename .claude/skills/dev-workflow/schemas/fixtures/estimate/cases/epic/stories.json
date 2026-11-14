@@ -1,0 +1,107 @@
+[
+  {
+    "story": "ORD-61",
+    "features": {
+      "complexity": "M",
+      "ac_count": 8,
+      "design": false,
+      "plan_steps": 10,
+      "subtasks": [
+        {
+          "id": "T-1",
+          "type": "impl",
+          "executor": "local",
+          "ac_count": 2
+        },
+        {
+          "id": "T-2",
+          "type": "impl",
+          "executor": "local",
+          "ac_count": 2
+        },
+        {
+          "id": "T-3",
+          "type": "impl",
+          "executor": "claude",
+          "ac_count": 2
+        },
+        {
+          "id": "T-4",
+          "type": "impl",
+          "executor": "claude",
+          "ac_count": 2
+        }
+      ]
+    }
+  },
+  {
+    "story": "ORD-62",
+    "features": {
+      "complexity": "M",
+      "ac_count": 8,
+      "design": false,
+      "plan_steps": 20,
+      "subtasks": [
+        {
+          "id": "T-1",
+          "type": "impl",
+          "executor": "local",
+          "ac_count": 2
+        },
+        {
+          "id": "T-2",
+          "type": "impl",
+          "executor": "local",
+          "ac_count": 2
+        },
+        {
+          "id": "T-3",
+          "type": "impl",
+          "executor": "claude",
+          "ac_count": 2
+        },
+        {
+          "id": "T-4",
+          "type": "impl",
+          "executor": "claude",
+          "ac_count": 2
+        }
+      ]
+    }
+  },
+  {
+    "story": "ORD-63",
+    "features": {
+      "complexity": "M",
+      "ac_count": 8,
+      "design": false,
+      "plan_steps": 5,
+      "subtasks": [
+        {
+          "id": "T-1",
+          "type": "impl",
+          "executor": "local",
+          "ac_count": 2
+        },
+        {
+          "id": "T-2",
+          "type": "impl",
+          "executor": "local",
+          "ac_count": 2
+        },
+        {
+          "id": "T-3",
+          "type": "impl",
+          "executor": "claude",
+          "ac_count": 2
+        },
+        {
+          "id": "T-4",
+          "type": "impl",
+          "executor": "claude",
+          "ac_count": 2
+        }
+      ]
+    }
+  }
+]

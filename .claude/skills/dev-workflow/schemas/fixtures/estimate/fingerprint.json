@@ -1,0 +1,6 @@
+{
+  "local_model": "dw-27b",
+  "epic_story_host": "subagent",
+  "local_executor_host": "subagent",
+  "ci_runner": "build-karl"
+}

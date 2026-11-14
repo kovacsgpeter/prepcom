@@ -1,0 +1,16 @@
+{
+  "complexity": "M",
+  "ac_count": 4,
+  "design": false,
+  "plan_steps": 99,
+  "estimated": [
+    "plan_steps",
+    "plan_files"
+  ],
+  "subtasks": [
+    {
+      "id": "ORD-83",
+      "ac_count": 4
+    }
+  ]
+}

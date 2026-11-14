@@ -1,0 +1,454 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "run-metrics.v1.json",
+  "title": "Run Metrics v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "recorded_at",
+    "project",
+    "story",
+    "kind",
+    "features",
+    "fingerprint",
+    "actual"
+  ],
+  "properties": {
+    "schema": {
+      "const": "run-metrics/v1"
+    },
+    "recorded_at": {
+      "type": "string",
+      "pattern": "^[0-9T:.Z-]{20,30}$"
+    },
+    "dw_version": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.:/+-]{0,64}$",
+      "maxLength": 64
+    },
+    "project": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.:/+-]{0,64}$",
+      "maxLength": 64
+    },
+    "epic": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[A-Za-z0-9_.:/+-]{0,64}$",
+      "maxLength": 64
+    },
+    "story": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[A-Za-z0-9_.:/+-]{0,64}$",
+      "maxLength": 64
+    },
+    "kind": {
+      "enum": [
+        "story",
+        "epic_overhead"
+      ]
+    },
+    "backfilled": {
+      "type": "boolean"
+    },
+    "price_table_version": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.:/+-]{0,64}$",
+      "maxLength": 64
+    },
+    "features": {
+      "type": "object",
+      "additionalProperties": {
+        "pattern": "^[A-Za-z0-9_.:/+-]{0,64}$",
+        "maxLength": 64
+      },
+      "properties": {
+        "complexity": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.:/+-]{0,64}$",
+          "maxLength": 64
+        },
+        "complexity_initial": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.:/+-]{0,64}$",
+          "maxLength": 64
+        },
+        "ac_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "subtasks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": {
+              "pattern": "^[A-Za-z0-9_.:/+-]{0,64}$",
+              "maxLength": 64
+            },
+            "properties": {
+              "ac_count": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        },
+        "plan_steps": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "plan_files": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "design": {
+          "type": "boolean"
+        },
+        "estimated": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9_.:/+-]{0,64}$",
+            "maxLength": 64
+          }
+        }
+      }
+    },
+    "fingerprint": {
+      "type": "object",
+      "additionalProperties": {
+        "pattern": "^[A-Za-z0-9_.:/+-]{0,64}$",
+        "maxLength": 64
+      },
+      "properties": {
+        "dw_version": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.:/+-]{0,64}$",
+          "maxLength": 64
+        },
+        "workflow_profile": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.:/+-]{0,64}$",
+          "maxLength": 64
+        },
+        "epic_story_host": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.:/+-]{0,64}$",
+          "maxLength": 64
+        },
+        "local_executor_host": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.:/+-]{0,64}$",
+          "maxLength": 64
+        },
+        "local_model": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.:/+-]{0,64}$",
+          "maxLength": 64
+        },
+        "gpu": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.:/+-]{0,64}$",
+          "maxLength": 64
+        },
+        "ci_runner": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.:/+-]{0,64}$",
+          "maxLength": 64
+        }
+      }
+    },
+    "actual": {
+      "type": "object",
+      "additionalProperties": {
+        "pattern": "^[A-Za-z0-9_.:/+-]{0,64}$",
+        "maxLength": 64
+      },
+      "required": [
+        "tokens",
+        "cost_usd",
+        "cost_estimated"
+      ],
+      "properties": {
+        "wall_clock_s": {
+          "type": "number",
+          "minimum": 0
+        },
+        "wall_clock_incl_e6_s": {
+          "type": "number",
+          "minimum": 0
+        },
+        "active_agent_s": {
+          "type": "number",
+          "minimum": 0
+        },
+        "human_wait_s": {
+          "type": "number",
+          "minimum": 0
+        },
+        "active_estimated": {
+          "type": "boolean"
+        },
+        "tokens": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "input",
+              "cache_write",
+              "cache_read",
+              "output"
+            ],
+            "properties": {
+              "input": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "cache_write": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "cache_read": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "output": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        },
+        "cost_usd": {
+          "type": "number",
+          "minimum": 0
+        },
+        "cost_estimated": {
+          "type": "boolean"
+        },
+        "by_phase": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "tokens": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "cost_usd": {
+                "type": "number",
+                "minimum": 0
+              },
+              "wall_s": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              }
+            }
+          }
+        },
+        "local": {
+          "type": "object",
+          "additionalProperties": {
+            "pattern": "^[A-Za-z0-9_.:/+-]{0,64}$",
+            "maxLength": 64
+          },
+          "properties": {
+            "calls": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "success": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "steps": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "steps_clean": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "steps_fixed": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "fallbacks": {
+              "type": "object",
+              "additionalProperties": {
+                "pattern": "^[A-Za-z0-9_.:/+-]{0,64}$",
+                "maxLength": 64
+              },
+              "properties": {
+                "total": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "invalid_json": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "typecheck": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "test": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "api_misuse": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "breaker": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "unsplittable": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "manual_edit": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "unreachable": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "unmapped": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "estimated": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "model_s": {
+              "type": [
+                "number",
+                "null"
+              ]
+            },
+            "model_s_estimated": {
+              "type": "boolean"
+            }
+          }
+        },
+        "ci": {
+          "type": [
+            "object",
+            "null"
+          ],
+          "properties": {
+            "pipelines": {
+              "type": "number",
+              "minimum": 0
+            },
+            "mr_pipelines": {
+              "type": "number",
+              "minimum": 0
+            },
+            "run_s": {
+              "type": "number",
+              "minimum": 0
+            },
+            "queue_s": {
+              "type": "number",
+              "minimum": 0
+            }
+          }
+        },
+        "rounds": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "fix": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "review": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "qa": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "mr_iid": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "merge_commit_sha": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.:/+-]{0,64}$",
+          "maxLength": 64
+        },
+        "merged_at": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9_.:/+-]{0,64}$",
+          "maxLength": 64
+        },
+        "windows": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:/+-]{0,64}$",
+                "maxLength": 64
+              },
+              "start": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:/+-]{0,64}$",
+                "maxLength": 64
+              },
+              "end": {
+                "type": "string",
+                "pattern": "^[A-Za-z0-9_.:/+-]{0,64}$",
+                "maxLength": 64
+              },
+              "seconds": {
+                "type": "number",
+                "minimum": 0
+              }
+            }
+          }
+        }
+      }
+    },
+    "anomalies": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "breaker_open",
+          "network_enotfound",
+          "context_compaction",
+          "invalid_json",
+          "unreachable"
+        ]
+      }
+    },
+    "estimate": {
+      "type": [
+        "object",
+        "null"
+      ]
+    }
+  }
+}

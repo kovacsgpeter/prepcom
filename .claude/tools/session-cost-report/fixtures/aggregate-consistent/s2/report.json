@@ -1,0 +1,24 @@
+{
+  "sessionId": "s2",
+  "generatedAt": "2026-08-27T08:30:00.000Z",
+  "pricingVerified": false,
+  "total": { "callCount": 2, "input": 3500, "output": 250, "cacheWrite": 0, "cacheRead": 5000, "cost": 0.09 },
+  "phases": [
+    {
+      "label": "Skill: dev-workflow-execute",
+      "summary": { "callCount": 1, "input": 500, "output": 100, "cacheWrite": 0, "cacheRead": 1000, "cost": 0.015 },
+      "mainThread": { "callCount": 1, "input": 500, "output": 100, "cacheWrite": 0, "cacheRead": 1000, "cost": 0.015 },
+      "subagent": { "callCount": 0, "input": 0, "output": 0, "cacheWrite": 0, "cacheRead": 0, "cost": 0 },
+      "parallelSubagents": 1,
+      "modelCheck": null
+    },
+    {
+      "label": "Agent: implementer",
+      "summary": { "callCount": 1, "input": 3000, "output": 150, "cacheWrite": 0, "cacheRead": 4000, "cost": 0.075 },
+      "mainThread": { "callCount": 0, "input": 0, "output": 0, "cacheWrite": 0, "cacheRead": 0, "cost": 0 },
+      "subagent": { "callCount": 1, "input": 3000, "output": 150, "cacheWrite": 0, "cacheRead": 4000, "cost": 0.075 },
+      "parallelSubagents": 1,
+      "modelCheck": null
+    }
+  ]
+}

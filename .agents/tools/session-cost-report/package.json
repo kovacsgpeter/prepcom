@@ -1,0 +1,6 @@
+{
+  "name": "session-cost-report",
+  "private": true,
+  "type": "commonjs",
+  "description": "ORD-366: az analyze.js CommonJS; ez a fájl a hívó repó gyökér package.json type mezőjétől (pl. ESM-repó) függetlenné teszi."
+}

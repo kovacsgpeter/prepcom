@@ -1,0 +1,15 @@
+{
+  "$schemaVersion": 1,
+  "$description": "COCALC-387 (LOCAL-4) -- a call-local-model.sh (COCALC-220/LOCAL-1) --schema kapcsolojanak erteke, amikor a resolve-executor-level.sh az 'implementer' fazisra 'local' szintet ad. A sajat, leegyszerusitett sema-konvenciot koveti (lasd call-local-model.sh fejlec-doksijat: required/properties/x-file-path-fields/x-file-write-path-fields) -- NEM teljes JSON Schema. Verziozott fajl: ha a szerzodes bovul/valtozik, uj 'implementer-response.v2...' fajlt kell letrehozni, ezt nem szabad hely-ben modositani (lasd README a mappaban vagy a hivo SKILL.md-t).",
+  "required": ["status", "summary", "filesWritten", "commitMessage"],
+  "properties": {
+    "status": { "type": "string" },
+    "summary": { "type": "string" },
+    "filesWritten": { "type": "array" },
+    "fileContents": { "type": "object" },
+    "commitMessage": { "type": "string" },
+    "testsPassed": { "type": "boolean" },
+    "openQuestions": { "type": "array" }
+  },
+  "x-file-write-path-fields": ["filesWritten"]
+}

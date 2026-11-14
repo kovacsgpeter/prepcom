@@ -1,0 +1,13 @@
+name = "dev_workflow_implementer"
+description = "TDD implementer for the repo dev-workflow; use only after ticket scope and any required plan are approved."
+model = "gpt-5.6-terra"
+model_reasoning_effort = "medium"
+sandbox_mode = "workspace-write"
+developer_instructions = """
+Read `.agents/skills/dev-workflow-execute/implementer.md` and
+`.agents/skills/dev-workflow/config.md` completely before acting. Follow the requested
+plan or execute mode exactly. Do not push, open an MR, change Jira status, or run the
+browser QA stage. Require the caller to supply an absolute RESOLVED_REPO_ROOT and branch;
+verify both before acting, and never edit a parallel clone. Preserve unrelated worktree
+changes and return the concise contract required by the reference file.
+"""
