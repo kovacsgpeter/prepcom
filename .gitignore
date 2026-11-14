@@ -1,0 +1,18 @@
+# Titkok: a .env* fájlok soha nem kerülnek a repóba (a sablon kivétel)
+.env*
+!.env.example
+
+# Függőségek / build
+node_modules/
+dist/
+build/
+
+# Teszt-kimenetek
+coverage/
+junit*.xml
+
+# Egyéb
+*.log
+.DS_Store
+.claude/worktrees/
+.claude/settings.local.json

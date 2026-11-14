@@ -19,7 +19,7 @@
 #
 # Kapcsolók (env var):
 #   DOPPLER_TOKEN   - Doppler Service Token (a GitLab CI/CD Variables alól, Protected+Masked)
-#   DOPPLER_PROJECT - Doppler projekt neve (alap: "wordcloud" - a felhasználónak a saját
+#   DOPPLER_PROJECT - Doppler projekt neve (alap: "prepcom" - a felhasználónak a saját
 #                     Doppler-projekt-nevével összhangba kell hoznia, ha attól eltér)
 #   DOPPLER_CONFIG  - Doppler config neve (alap: "ci")
 #
@@ -33,7 +33,7 @@ if [ "$#" -eq 0 ]; then
 fi
 
 if [ -n "${DOPPLER_TOKEN:-}" ]; then
-  DOPPLER_PROJECT="${DOPPLER_PROJECT:-wordcloud}"
+  DOPPLER_PROJECT="${DOPPLER_PROJECT:-prepcom}"
   DOPPLER_CONFIG="${DOPPLER_CONFIG:-ci}"
 
   if ! command -v doppler >/dev/null 2>&1; then

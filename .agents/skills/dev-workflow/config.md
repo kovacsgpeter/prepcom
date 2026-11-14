@@ -14,7 +14,7 @@ olvassa be először; rövid, egészben beolvasható.
   kerüljön; az upgrade nem nyúl hozzá.
 - A `<...>` helyőrzőket (`<REPO_PATH>`, `<JIRA_PROJECT_KEY>`, `<LOGICAL_REPO_NAME>`, `<TEST_ENV_URL>`,
   `<AI_GIT_NAME>`, `<AI_GIT_EMAIL>`, `<ASSIGNEE_ACCOUNT_ID>`, `<MANUAL_ASSIGNEE_NAME>`,
-  `<FIGMA_FILE_REF_VALUE>` stb.) a saját repód értékeire cseréld, mielőtt bármelyik dev-workflow skillt
+  *(nincs — a prepcom-hoz még nincs Figma-fájl)* stb.) a saját repód értékeire cseréld, mielőtt bármelyik dev-workflow skillt
   használnád.
 - Váratlan tracker-/API-állapotnál a [`history.md`](history.md) segít (nem hot-path olvasmány).
 
@@ -66,11 +66,11 @@ olvassa be először; rövid, egészben beolvasható.
 
 | Változó | Érték |
 |---|---|
-| `ASSIGNEE_FOR_PICKUP` | `<ASSIGNEE_FOR_PICKUP>` ✅ *(accountId `<ASSIGNEE_ACCOUNT_ID>`)* |
+| `ASSIGNEE_FOR_PICKUP` | `Gellért Péter Kovács` ✅ *(accountId `5bfac3eea424561a8ea5d98c`)* |
 | `CODEX_WORK_LABEL` | `codex` |
 | `CODEX_CREATED_LABEL` | `codex-created` |
-| `MANUAL_DEV_ASSIGNEE` | `<MANUAL_ASSIGNEE_NAME>` |
-| `MANUAL_REVIEWER_ASSIGNEE` | `<MANUAL_ASSIGNEE_NAME>` |
+| `MANUAL_DEV_ASSIGNEE` | `Gellért Péter Kovács` |
+| `MANUAL_REVIEWER_ASSIGNEE` | `Gellért Péter Kovács` |
 | `INITIAL_STATUS_NAME` | `To Do` |
 | `REVIEW_STATUS_NAME` | `review` ✅ *(kisbetűs Jira státusznév, `id: 10003`, API-val megerősítve)* |
 
@@ -78,16 +78,16 @@ olvassa be először; rövid, egészben beolvasható.
 
 | Változó | Érték |
 |---|---|
-| `AI_GIT_NAME` | `<AI_GIT_NAME>` |
-| `AI_GIT_EMAIL` | `<AI_GIT_EMAIL>` |
-| `AI_GITLAB_USERNAME` | `<AI_GIT_NAME>` |
+| `AI_GIT_NAME` | `tfss_ai` |
+| `AI_GIT_EMAIL` | `thefirstsmoothstone@gmail.com` |
+| `AI_GITLAB_USERNAME` | `tfss_ai` |
 | `AI_GITLAB_TOKEN_ENV_VAR` | `GITLAB_TOKEN_AI` |
 
 ## Repók és projektek
 
 | Logikai név | Repo path/URL | Alap branch | Jira project key |
 |---|---|---|---|
-| `<LOGICAL_REPO_NAME>` | `.` *(aktív Git workspace gyökere)* | `master` | `<JIRA_PROJECT_KEY>` |
+| `prepcom` | `.` *(aktív Git workspace gyökere)* | `main` | `PREP` |
 
 ## Ticket formátum
 
@@ -154,16 +154,16 @@ olvassa be először; rövid, egészben beolvasható.
 |---|---|
 | `UX_DESIGN_PRINCIPLES_FILE` | `docs/design-principles.md` |
 | `UX_OUTPUT_DIR` | `docs/ux` |
-| `UX_FRONTEND_DIR` | `frontend` |
-| `UX_FRONTEND_APP_DIR` | `frontend/src/app` |
-| `UX_BACKEND_DIR` | `backend` |
+| `UX_FRONTEND_DIR` | `.` |
+| `UX_FRONTEND_APP_DIR` | `.` |
+| `UX_BACKEND_DIR` | `-` |
 | `UX_DESIGN_TOKENS_FILE` | `frontend/src/styles/_design-tokens.scss` |
 | `UX_AUDIT_TARGET` | `local-dev-server` |
 | `UX_AUDIT_VIEWPORTS` | `1440x900,768x1024,375x812` |
 | `UX_MAX_FINDINGS` | `15` |
 | `UX_CRITIQUE_GATE` | `advisory` |
 | `UI_CHANGE_BUDGET_DEFAULT` | `free` |
-| `UI_CHANGE_BUDGET_BASE` | `origin/master` |
+| `UI_CHANGE_BUDGET_BASE` | `origin/main` |
 
 ## Epic-mód (E-ág)
 
@@ -174,7 +174,7 @@ olvassa be először; rövid, egészben beolvasható.
 | `EPIC_MAX_PARALLEL` | `2` |
 | `EPIC_LOCAL_LLM_CONCURRENCY` | `1` |
 | `EPIC_ON_STORY_FAILURE` | `continue-independent` |
-| `EPIC_BASE_BRANCH` | `master` |
+| `EPIC_BASE_BRANCH` | `main` |
 | `EPIC_WORKTREE_ROOT` | `..` |
 | `EPIC_WORKTREE_SETUP_CMD` | `-` |
 | `EPIC_REBASE_CHECK_CMD` | `-` |
@@ -195,7 +195,7 @@ olvassa be először; rövid, egészben beolvasható.
 | `LOCAL_RUN_DIR` | `../{repo}-local-run` |
 | `LOCAL_CONVENTIONS_FILE` | `{task_dir}/conventions.md` |
 | `LOCAL_FORMAT_CMD` | `-` |
-| `LOCAL_CHECK_CMD` | `-` |
+| `LOCAL_CHECK_CMD` | `node --test tests/*.test.mjs` |
 | `LOCAL_CHECK_DB_CMD` | `-` |
 
 ## CI-készenlét (CI_READINESS_*)
@@ -210,7 +210,7 @@ olvassa be először; rövid, egészben beolvasható.
 
 | Logikai név | URL | `TEST_ENV_MR_DEPLOY_MODE` |
 |---|---|---|
-| `<LOGICAL_REPO_NAME>` | `<TEST_ENV_URL>` | `<TEST_ENV_MR_DEPLOY_MODE>` — a konkrét deploy-viselkedést lásd a lenti `TEST_ENV_MR_DEPLOY_MODE` értéktáblában. |
+| `prepcom` | `-` | `none` — nincs külön teszt-környezet: statikus oldal, a helyi `index.html` / böngészős tesztek elegendők. |
 
 ## Design-review ciklus (B ág)
 
@@ -220,4 +220,25 @@ olvassa be először; rövid, egészben beolvasható.
 | `FIRST_REVIEW_DONE_STATUS` | `first_review_done` ✅ |
 | `SECOND_REVIEW_REQUESTED_STATUS` | `second_review_requested` ✅ |
 | `SECOND_REVIEW_DONE_STATUS` | `second_review_done` ✅ |
-| `FIGMA_FILE_REF` | `<FIGMA_FILE_REF_VALUE>` |
+| `FIGMA_FILE_REF` | *(nincs — a prepcom-hoz még nincs Figma-fájl)* |
+
+## Repó-lokális kulcsok (prepcom)
+
+| Változó | Érték | Indoklás |
+|---|---|---|
+| `OPENPROJECT_URL` | `(Doppler: OPENPROJECT_URL)` | A self-hosted OpenProject címe (tailneten); forrás: Doppler `prepcom` / `dev`. |
+
+## Repó-lokális megjegyzések (prepcom)
+
+- Statikus, buildmentes oldal (`index.html` + ES-modulok, GitHub Pages-es múlttal); nincs `package.json`. A unit tesztek `node --test tests/*.test.mjs`, a `tests/*-browser.cjs` böngészős ellenőrzések kézzel futnak.
+- GitLab remote: `https://gitlab.com/constructioncalculator/prepcom.git` (**még létre kell hozni**; jelenleg a remote GitHub). Alap branch: `main`.
+- Tracker: OpenProject; a `PREP` projektkulcs feltételezés — a tényleges kulcsot az OpenProjectben létrehozott projekt adja, utána itt és a `REPO_MAP`-ben át kell írni.
+- Confluence: nincs, a `CONFLUENCE_*` kulcsok üresek.
+
+### Doppler / secret-management
+
+| Env-változó | Titkos? | Leírás |
+|---|---|---|
+| `DOPPLER_TOKEN` | igen (Protected+Masked) | Doppler Service Account token, a `ci/run-with-doppler.sh` env-változóként olvassa. |
+| `DOPPLER_PROJECT` | nem | `prepcom` (a `run-with-doppler.sh` alapértéke is ez). |
+| `DOPPLER_CONFIG` | nem | Lokálisan `dev` (`doppler run -p prepcom -c dev -- claude`); CI-config még nincs létrehozva (a script alapértéke `ci`). |
